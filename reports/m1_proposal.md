@@ -31,13 +31,15 @@ This dataset primarily includes time variables, regional information, trade deta
 **New Derived Variable**  
 To make the visualization more informative, we will engineer a new variable - `Net_Trade`. 
 
-Net_Trade is defined as:  
-Net_Trade = Export_Trade - Import_Trade   
+Net_Trade is defined as: 
+``` 
+Net_Trade = Export_Trade - Import_Trade
+```   
 
 This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
 
 **Description of Variables for Visualization**  
-The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and trade value metrices.
+The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and trade value metrices.  
 1. Time:
     - `YEAR`: continuous, year in the above timestamp.
 2. Region:
