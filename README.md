@@ -14,4 +14,4 @@ This project was created by
 Interested in contributing? Check out our [Contributing Guidelines](./CONTRIBUTING.md). Please note that this project is released with a [Code of Conduct](./CODE_OF_CONDUCT.md). By contributing to this project, you agree to abide by its terms.
 
 # License
-This project is licensed under the [MIT License](./LICENSE.md).
+The software portion of this project is licensed under the [MIT License](./LICENSE.md).
