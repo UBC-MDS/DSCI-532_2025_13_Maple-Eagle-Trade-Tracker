@@ -18,7 +18,7 @@ In light of the 2025 *tariff wars* between Canada and the United States, the Can
 **Our Solution**  
 We propose a dashboard that provides clear, interactive visualizations of the sectors and geographical areas most affected by the tariff bans. By identifying which industries are under the most strain and pinpointing the regions experiencing the highest levels of economic disruption, the dashboard will empower government agencies to make informed decisions. This, in turn, can help alleviate the economic burden on citizens by guiding the government in diversifying its support for the affected sectors.
 
-## Question 2 : Description of the data
+## Description of the data
 **Raw Data Overview**  
 The dataset is sourced from [Statistics Canada](http://doi.org/10.25318/1210017501-eng). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
 
@@ -29,13 +29,11 @@ This dataset primarily includes time variables, regional information, trade deta
 - Regional Analysis: Since the dataset covers all Canadian provinces, the federal government can assess the varying impacts across different regions, implement targeted support, and optimize resource allocation.
 
 **New Derived Variable**  
-To make the visualization more informative, we will engineer a new variable - `Net_Trade`. 
-
+To make the visualization more informative, we will engineer a new variable - `Net_Trade`.   
 Net_Trade is defined as: 
 ``` 
 Net_Trade = Export_Trade - Import_Trade
 ```   
-
 This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
 
 **Description of Variables for Visualization**  
