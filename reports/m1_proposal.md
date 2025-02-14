@@ -22,18 +22,21 @@ We propose a dashboard that provides clear, interactive visualizations of the se
 **Raw Data Overview**  
 The dataset is sourced from [Statistics Canada](http://doi.org/10.25318/1210017501-eng). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
 
-**Relevance of Data to the Problem**
+**Relevance of Data to the Problem**  
 This dataset primarily includes time variables, regional information, trade details, and related amounts. Therefore, this dataset will be useful in three key areas for Canada when responding to the 2025 trade dispute with the United States.  
 - Development Trend: The dataset provides information from the past ten years, making these historical trends valuable references for future development.
 - Industry-specific Analysis: The dataset includes trade information across different industries, allowing us to examine each industry separately and formulate precise subsidy policies based on the extent of their impact.
 - Regional Analysis: Since the dataset covers all Canadian provinces, the federal government can assess the varying impacts across different regions, implement targeted support, and optimize resource allocation.
 
-**New Derived Variable**
-To make the visualization more informative, we will engineer a new variable - `Net_Trade`.
-$$Net\_Trade = Export\_Trade - Import\_Trade$$  
+**New Derived Variable**  
+To make the visualization more informative, we will engineer a new variable - `Net_Trade`. 
+
+Net_Trade is defined as:  
+Net_Trade = Export_Trade - Import_Trade   
+
 This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
 
-**Description of Variables for Visualization**
+**Description of Variables for Visualization**  
 The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and trade value metrices.
 1. Time:
     - `YEAR`: continuous, year in the above timestamp.
