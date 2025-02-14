@@ -30,7 +30,7 @@ This dataset primarily includes time variables, regional information, trade deta
 
 **New Derived Variable**
 To make the visualization more informative, we will engineer a new variable - `Net_Trade`.
-$Net_Trade = Export_Trade - Import_Trade$  
+$$Net\_Trade = Export\_Trade - Import\_Trade$$  
 This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
 
 **Description of Variables for Visualization**
