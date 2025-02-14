@@ -18,23 +18,23 @@ In light of the 2025 *tariff wars* between Canada and the United States, the Can
 **Our Solution**  
 We propose a dashboard that provides clear, interactive visualizations of the sectors and geographical areas most affected by the tariff bans. By identifying which industries are under the most strain and pinpointing the regions experiencing the highest levels of economic disruption, the dashboard will empower government agencies to make informed decisions. This, in turn, can help alleviate the economic burden on citizens by guiding the government in diversifying its support for the affected sectors.
 
-## Question 2 : Description of the data (Robbie)
+## Question 2 : Description of the data
 **Raw Data Overview**  
 The dataset is sourced from [Statistics Canada](http://doi.org/10.25318/1210017501-eng). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
 
 **Relevance of Data to the Problem**
-This dataset primarily includes time variables, regional information, trade details, and related amounts. Therefore, it will be helpful in three aspects for Canada in addressing the 2025 trade dispute between the United Status and Canada.
+This dataset primarily includes time variables, regional information, trade details, and related amounts. Therefore, this dataset will be useful in three key areas for Canada when responding to the 2025 trade dispute with the United States.  
 - Development Trend: The dataset provides information from the past ten years, making these historical trends valuable references for future development.
 - Industry-specific Analysis: The dataset includes trade information across different industries, allowing us to examine each industry separately and formulate precise subsidy policies based on the extent of their impact.
 - Regional Analysis: Since the dataset covers all Canadian provinces, the federal government can assess the varying impacts across different regions, implement targeted support, and optimize resource allocation.
 
 **New Derived Variable**
 To make the visualization more informative, we will engineer a new variable - `Net_Trade`.
-$Net_Trade = Export_Trade - Import_Trade$
+$Net_Trade = Export_Trade - Import_Trade$  
 This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
 
 **Description of Variables for Visualization**
-The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and statistical values.
+The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and trade value metrices.
 1. Time:
     - `YEAR`: continuous, year in the above timestamp.
 2. Region:
@@ -42,9 +42,9 @@ The original dataset contains 19 variables, including some redundant and irrelev
 3. Trade type and product classification:
     - `Trade`: categorical, trade type, import or export.
     - `North American Product Classification System (NAPCS)`: categorical, classifications for traded goods.
-4. Statistical values:
+4. Trade value metrices:
     - `FULL_VALUE`: continuous, the actual trade value.
-    - `Net_Trade`: contonuous, derived variable, the difference between exported trade value and imported trade value.
+    - `Net_Trade`: continuous, derived variable, the difference between exported trade value and imported trade value.
 
 ## Question 3: Research questions and usage scenarios (Alex)
 The purpose of this section is to get you to think in more detail about how your target audience will use the app you're designing and to account for these detailed needs in the proposal.
