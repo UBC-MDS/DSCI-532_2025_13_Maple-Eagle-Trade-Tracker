@@ -20,7 +20,7 @@ We propose a dashboard that provides clear, interactive visualizations of the se
 
 ## Description of the data
 **Raw Data Overview**  
-The dataset is sourced from [Statistics Canada](http://doi.org/10.25318/1210017501-eng). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
+The dataset is sourced from [Statistics Canada](https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=1210017501). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
 
 **Relevance of Data to the Problem**  
 This dataset primarily includes time variables, regional information, trade details, and related amounts. Therefore, this dataset will be useful in three key areas for Canada when responding to the 2025 trade dispute with the United States.  
