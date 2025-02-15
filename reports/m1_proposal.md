@@ -38,7 +38,7 @@ If you are planning to visualize a lot of columns, provide a high level descript
 For example, indicate that the dataset contains a variety of categorical variables for demographics and provide a brief list rather than describing every single variable.
 You may also want to consider visualizing a smaller set of variables given the short duration of this project.
 
-## Question 3: Research questions and usage scenarios (Alex)
+## Question 3: Research Questions and Usage Scenarios
 
 Dominic is a senior trade policy analyst at the Department of Finance Canada and his primary role is to monitor trade flows between Canada and its trading partners and provide policy recommendations that benefit Canada.
 
@@ -59,15 +59,8 @@ Through the use of the Tracker, Dominic discovers BC will be one of the hardest 
 He also noticed BC's lumber exports to the US has been steadily rising in recent years and have decided to place BC's lumber industry as priority for the new subsidy program prepared by the Department of Finance.
 On the other hand, Dominic learned alcoholic beverages is a key import from the US and so Dominic advises the Department of Finance to explore ways to help the Canadian hospitality industry diversify their supply network for alcoholic beverages while proposing retaliatory tariffs on US alcohol.
 
-## Question 4: App sketch & brief description (Bryan)
+## Question 4: App Sketch & Brief Description
 
 ![Dashboard Sketch](../img/sketch.png)
 
-This dashboard provides a comprehensive view of Canada's trade metrics for 2024, focusing on total imports and exports in CAD.
-Key performance indicators (KPIs card figure 1 and 2) for imports and exports, representing the most recent year, are displayed at the top of the dashboard.
-A line chart to the right (figure 3) shows net trade volume over the past decade, indicating whether Canada had a trade surplus or deficit each year based on the difference between imports and exports.
-In the center, an interactive map (figure 6) visualizes net trade by province, with provinces color-coded from green to red, based on their trade balance (imports minus exports).
-The two splicers (figure 7 and 8) allow for filtering by trade sector (e.g., fishing, agriculture, mining) and by province/territory, dynamically updating the entire dashboard.
-On the left, two vertical bar charts (figure 4 and 5) display the total import and export volumes, while two additional bar charts at the bottom (figure 9 and 10) show annual import and export values in CAD from 2014 to 2024.
-The provincial map updates based on the selected province, and the sector bar chart adjusts to display data for the selected trade sector by reducing the number of bars selected.
-All visualizations are linked to the two splicers, offering a tailored view of Canada's trade landscape.
+This dashboard provides a comprehensive view of Canada's trade metrics for 2024, focusing on total imports and exports in CAD. Key performance indicators (KPIs card figure 1 and 2) for imports and exports, representing the most recent year, are displayed at the top of the dashboard. A line chart to the right (figure 3) shows trade balance volume over the past decade, indicating whether Canada had a trade surplus or deficit each year based on the difference between imports and exports. In the center, an interactive map (figure 6) visualizes trade balance by province, with provinces color-coded from green to red, based on their trade balance (imports minus exports). The two splicers (figure 7 and 8) allow for filtering by trade sector (e.g., fishing, agriculture, mining) and by province/territory, dynamically updating the entire dashboard. On the left, two vertical bar charts (figure 4 and 5) display the total import and export volumes, while two additional bar charts at the bottom (figure 9 and 10) show annual import and export values in CAD from 2014 to 2024. The provincial map updates based on the selected province, and the sector bar chart adjusts to display data for the selected trade sector by reducing the number of bars selected. All visualizations are linked to the two splicers, offering a tailored view of Canada's trade landscape.
