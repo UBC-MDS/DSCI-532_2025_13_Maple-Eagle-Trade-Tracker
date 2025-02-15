@@ -28,15 +28,36 @@ We propose a dashboard that provides clear, interactive visualizations of the se
 By identifying which industries are under the most strain and pinpointing the regions experiencing the highest levels of economic disruption, the dashboard will empower government agencies to make informed decisions.
 This, in turn, can help alleviate the economic burden on citizens by guiding the government in diversifying its support for the affected sectors.
 
-## Question 2 : Description of the data (Robbie)
+## Description of the data
+**Raw Data Overview**  
+The dataset is sourced from [Statistics Canada](https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=1210017501). The original table contains 41,184 rows and 19 columns, which covers Canada's import and export activities with the United States across all provinces in various industries over the past ten years(from 2014 to 2024).
 
-Include how many rows and columns there are in the dataset (that you plan to use).
-There should be a clear link to how the dataset and the variables you describe will help you solve your target audience's problem.
-Indicate at least one new variable that you are planning to derive/engineer for your visualizations.
-If there are no new variables to derive, indicate what additional information you would have liked to have in the dataset to better be able to answer your research questions (even if it is impossible for you to engineer it).
-If you are planning to visualize a lot of columns, provide a high level description of the variable types rather than listing every single column.
-For example, indicate that the dataset contains a variety of categorical variables for demographics and provide a brief list rather than describing every single variable.
-You may also want to consider visualizing a smaller set of variables given the short duration of this project.
+**Relevance of Data to the Problem**  
+This dataset primarily includes time variables, regional information, trade details, and related amounts. Therefore, this dataset will be useful in three key areas for Canada when responding to the 2025 trade dispute with the United States.  
+- Development Trend: The dataset provides information from the past ten years, making these historical trends valuable references for future development.
+- Industry-specific Analysis: The dataset includes trade information across different industries, allowing us to examine each industry separately and formulate precise subsidy policies based on the extent of their impact.
+- Regional Analysis: Since the dataset covers all Canadian provinces, the federal government can assess the varying impacts across different regions, implement targeted support, and optimize resource allocation.
+
+**New Derived Variable**  
+To make the visualization more informative, we will engineer a new variable - `Net_Trade`.   
+Net_Trade is defined as: 
+``` 
+Net_Trade = Export_Trade - Import_Trade
+```   
+This new variable will be used in our interactive map in visualization, to represent the trade surplus or deficit in each province.
+
+**Description of Variables for Visualization**  
+The original dataset contains 19 variables, including some redundant and irrelevant ones. The visualization will use a subset of these variables along with a newly derived variable. These variables cover four aspects: time, region, trade type and product classification, and trade value metrices.  
+1. Time:
+    - `YEAR`: continuous, year in the above timestamp.
+2. Region:
+    - `GEO`: categorical, province in Canada.
+3. Trade type and product classification:
+    - `Trade`: categorical, trade type, import or export.
+    - `North American Product Classification System (NAPCS)`: categorical, classifications for traded goods.
+4. Trade value metrices:
+    - `FULL_VALUE`: continuous, the actual trade value.
+    - `Net_Trade`: continuous, derived variable, the difference between exported trade value and imported trade value.
 
 ## Question 3: Research Questions and Usage Scenarios
 
