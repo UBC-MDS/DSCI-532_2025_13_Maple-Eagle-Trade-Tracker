@@ -152,4 +152,4 @@ express Statement of Purpose.
 # Dataset terms and conditions
 
 The International merchandise trade by province, commodity, and Principle Trading Partners dataset, compiled by Statistics Canada, 
-is free to use for non-commercial purposes, subject to the [Terms and conditions](https://www.canada.ca/en/transparency/terms.html).
+is free to use for non-commercial purposes, subject to the [Terms and conditions](https://www.canada.ca/en/transparency/terms.html, https://www.statcan.gc.ca/en/reference/licence).
