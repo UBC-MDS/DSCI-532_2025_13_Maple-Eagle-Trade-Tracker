@@ -1,12 +1,22 @@
-# Milestone 1: Group 13 Bryan, Alex, Uche, Robbie
-Project Github https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker
+# Maple Eagle Trade Tracker Proposal
 
-## Proposal
+> Milestone 1  
+> Group 13  
+> Authors: Sopuruchi Chisom, Bryan Lee, Alex Wong, Yun Zhou  
+> [Project Github Repo](https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker)
 
-## Question 1: Motivation and Purpose (Uche)
-Who is your target audience, and what role are you embodying?
-What is the problem the target audience is facing and why is it important to solve?
-How can your dashboard assist in solving this problem for the intended target audience?
+## Motivation and Purpose
+**Our Role**  
+We are freelance **data scientists** contracted by  **Government of Canada** to develop data-driven solutions for economic challenges arising from international trade disputes.
+
+**The Audience**  
+Our primary audience is Canadian government agencies, such as **Department of Finance Canada** and **Export Development Canada**, which are responsible for formulating policies in response to the economic impacts of the 2025 tariff disputes between Canada and the United States.
+
+**The Problem**  
+In light of the 2025 *tariff wars* between Canada and the United States, the Canadian government faces the challenge of understanding the economic impact of import and export bans on various sectors. This is particularly important as it impacts several key sectors and geographical areas, resulting in strains to businesses and consumers alike.
+
+**Our Solution**  
+We propose a dashboard that provides clear, interactive visualizations of the sectors and geographical areas most affected by the tariff bans. By identifying which industries are under the most strain and pinpointing the regions experiencing the highest levels of economic disruption, the dashboard will empower government agencies to make informed decisions. This, in turn, can help alleviate the economic burden on citizens by guiding the government in diversifying its support for the affected sectors.
 
 ## Question 2 : Description of the data (Robbie)
 Include how many rows and columns there are in the dataset (that you plan to use).
