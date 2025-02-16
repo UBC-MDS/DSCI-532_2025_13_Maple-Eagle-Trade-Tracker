@@ -1,9 +1,9 @@
 # Maple Eagle Trade Tracker Proposal
 
-> Milestone 1
-> Group 13
-> Authors: Sopuruchi Chisom, Bryan Lee, Alex Wong, Yun Zhou
-> [Project Github Repo](https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker)
+> Milestone 1   
+> Group 13  
+> Authors: Sopuruchi Chisom, Bryan Lee, Alex Wong, Yun Zhou  
+> [Project Github Repo](https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker)  
 
 ## Motivation and Purpose
 
