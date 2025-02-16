@@ -15,3 +15,8 @@ Interested in contributing? Check out our [Contributing Guidelines](./CONTRIBUTI
 
 # License
 The software portion of this project is licensed under the [MIT License](./LICENSE.md).
+
+The non-software portion of this project is licensed under the [Creative Commons Legal Code](./LICENSE.md)
+
+The International merchandise trade by province, commodity, and Principle Trading Partners dataset, compiled by Statistics Canada, 
+is free to use for non-commercial purposes, subject to the [Terms and conditions](https://www.canada.ca/en/transparency/terms.html, https://www.statcan.gc.ca/en/reference/licence).
