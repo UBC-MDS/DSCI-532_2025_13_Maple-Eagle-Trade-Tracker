@@ -59,10 +59,12 @@ app.layout = html.Div([
             html.Label("Select Province/Territory"),
             province_dropdown,
         ], style={'width': '20%', 'display': 'inline-block'}),
+    ], style={'display': 'flex', 'justify-content': 'space-around'}),
 
+    html.Div([
         dcc.Graph(id="historical_import_chart", style={'width': '30%', 'display': 'inline-block'}),
         dcc.Graph(id="historical_export_chart", style={'width': '30%', 'display': 'inline-block'})
-    ], style={'display': 'flex', 'justify-content': 'space-around'})
+    ])
 ])
 
 if __name__ == '__main__':
