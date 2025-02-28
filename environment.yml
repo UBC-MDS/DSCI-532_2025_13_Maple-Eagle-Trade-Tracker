@@ -20,3 +20,5 @@ dependencies:
   - pytest=8.3.4
   - responses=0.24.1
   - dash=2.14.2
+  - altair=5.1.2
+  - dash-bootstrap-components=1.7.1
