@@ -49,32 +49,37 @@ def create_historical_chart(filtered_df, title):
     )
     return chart.to_dict()
 
-app.layout = html.Div([
-    html.Div([
-        html.Div([
+app.layout = dbc.Container([
+    dbc.Row([
+        dbc.Col([
             html.Label("Select Trade Sector"),
             sector_dropdown,
-        ], style={'width': '20%', 'display': 'inline-block'}),
-
-        html.Div([
+        ], width=6),
+        
+        dbc.Col([
             html.Label("Select Province/Territory"),
             province_dropdown,
-        ], style={'width': '20%', 'display': 'inline-block'}),
-    ], style={'display': 'flex', 'justify-content': 'space-around'}),
+        ], width=6)
+    ], className="mb-4"),
 
-    html.Div([
-        dvc.Vega(
-            id="historical_import_chart",
-            spec=create_historical_chart(df[df["TRADE_FLOW"] == "Import"], "Annual Import"),  
-            style={'width': '45%', 'display': 'inline-block'}
-        ),
-        dvc.Vega(
-            id="historical_export_chart",
-            spec=create_historical_chart(df[df["TRADE_FLOW"] == "Domestic export"], "Annual Export"),  
-            style={'width': '45%', 'display': 'inline-block'}
-        )
+    dbc.Row([
+        dbc.Col([
+            dvc.Vega(
+                id="historical_import_chart",
+                spec=create_historical_chart(df[df["TRADE_FLOW"] == "Import"], "Annual Import"),  
+                style={'width': '100%'}
+            )
+        ], width=6),
+        
+        dbc.Col([
+            dvc.Vega(
+                id="historical_export_chart",
+                spec=create_historical_chart(df[df["TRADE_FLOW"] == "Domestic export"], "Annual Export"),  
+                style={'width': '100%'}
+            )
+        ], width=6)
     ])
-])
+], fluid=True)
 
 @app.callback(
     [Output("historical_import_chart", "spec"),
