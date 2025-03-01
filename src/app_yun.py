@@ -1,7 +1,8 @@
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.express as px
+import altair as alt
+import dash_vega_components as dvc
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
@@ -19,49 +20,36 @@ sector_options = [{'label': 'All', 'value': 'All'}] + [
 province_dropdown = dcc.Dropdown(
     id='province-dropdown',
     options=province_options,
-    value='All',
+    value=['All'],
     clearable=False,
+    multi=True
 )
 
 sector_dropdown = dcc.Dropdown(
     id='sector-dropdown',
     options=sector_options,
-    value='All',
+    value=['All'],
     clearable=False,
+    multi=True
 )
 
-def create_historical_chart(filtered_df, trade_flow, title):
+def create_historical_chart(filtered_df, title):
     grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({"VALUE": "sum"})
-    fig = px.bar(
-        grouped_df,
-        x="YEAR",
-        y="VALUE",
-        title=title,
-        labels={"VALUE": title, "YEAR": "Year"},
+    
+    chart = (
+        alt.Chart(grouped_df)
+        .mark_bar()
+        .encode(
+            x=alt.X("YEAR:O", title="Year"),
+            y=alt.Y("VALUE:Q", title=title),
+            tooltip=["YEAR", "VALUE"]
+        )
+        .properties(title=title, width=400, height=300)
+        .interactive()
     )
-    return fig
+    return chart.to_dict()
 
 app.layout = html.Div([
-    html.Div([
-        html.Div([
-            html.H4("Total Imports (CAD)"),
-            html.H2("$XX Billion", id="kpi_imports")
-        ], style={'border': '1px solid #ddd', 'padding': '10px', 'margin': '5px', 'display': 'inline-block'}),
-
-        html.Div([
-            html.H4("Total Exports (CAD)"),
-            html.H2("$XX Billion", id="kpi_exports")
-        ], style={'border': '1px solid #ddd', 'padding': '10px', 'margin': '5px', 'display': 'inline-block'})
-    ], style={'display': 'flex', 'justify-content': 'space-around'}),
-
-    dcc.Graph(id="trade_balance_chart"),
-
-    html.Div([
-        dcc.Graph(id="import_bar_chart", style={'width': '30%', 'display': 'inline-block'}),
-        dcc.Graph(id="export_bar_chart", style={'width': '30%', 'display': 'inline-block'}),
-        dcc.Graph(id="trade_balance_map", style={'width': '40%', 'display': 'inline-block'})
-    ], style={'display': 'flex', 'justify-content': 'space-around'}),
-
     html.Div([
         html.Div([
             html.Label("Select Trade Sector"),
@@ -75,38 +63,43 @@ app.layout = html.Div([
     ], style={'display': 'flex', 'justify-content': 'space-around'}),
 
     html.Div([
-        dcc.Graph(
+        dvc.Vega(
             id="historical_import_chart",
-            figure=create_historical_chart(df[df["TRADE_FLOW"] == "Import"], "Import", "Annual Import"),  
+            spec=create_historical_chart(df[df["TRADE_FLOW"] == "Import"], "Annual Import"),  
             style={'width': '45%', 'display': 'inline-block'}
         ),
-        dcc.Graph(
+        dvc.Vega(
             id="historical_export_chart",
-            figure=create_historical_chart(df[df["TRADE_FLOW"] == "Domestic export"], "Domestic export", "Annual Export"),  
+            spec=create_historical_chart(df[df["TRADE_FLOW"] == "Domestic export"], "Annual Export"),  
             style={'width': '45%', 'display': 'inline-block'}
         )
     ])
 ])
 
 @app.callback(
-    [Output("historical_import_chart", "figure"),
-     Output("historical_export_chart", "figure")],
+    [Output("historical_import_chart", "spec"),
+     Output("historical_export_chart", "spec")],
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
-
-def update_historical_charts(selected_province, selected_sector):
+def update_historical_charts(selected_provinces, selected_sectors):
+    if not selected_provinces:
+        selected_provinces = [province_options[1]['value']]  
+    if not selected_sectors:
+        selected_sectors = [sector_options[1]['value']]  
+    
     filtered_df = df.copy()
-    if selected_province != "All":
-        filtered_df = filtered_df[filtered_df["PROVINCE"] == selected_province]
-    if selected_sector != "All":
-        filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
+    
+    if "All" not in selected_provinces:
+        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
+    if "All" not in selected_sectors:
+        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
     
     import_df = filtered_df[filtered_df["TRADE_FLOW"] == "Import"]
     export_df = filtered_df[filtered_df["TRADE_FLOW"] == "Domestic export"]
     
-    import_chart = create_historical_chart(import_df, "Import", "Annual Import")
-    export_chart = create_historical_chart(export_df, "Domestic export", "Annual Export")
+    import_chart = create_historical_chart(import_df, "Annual Import")
+    export_chart = create_historical_chart(export_df, "Annual Export")
     
     return import_chart, export_chart
 
