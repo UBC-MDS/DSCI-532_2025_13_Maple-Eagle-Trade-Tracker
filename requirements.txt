@@ -5,3 +5,4 @@ dash-vega-components==0.9.*
 altair==5.1.*
 pandas==2.2.*
 numpy==2.1.3
+
