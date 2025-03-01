@@ -1,6 +1,7 @@
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
 import pandas as pd
+import altair as alt
 import plotly.express as px
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -22,7 +23,6 @@ province_dropdown = dcc.Dropdown(
     value='All',
     clearable=False,
 )
-
 sector_dropdown = dcc.Dropdown(
     id='sector-dropdown',
     options=sector_options,
@@ -39,6 +39,27 @@ def create_historical_chart(filtered_df, trade_flow, title):
         title=title,
         labels={"VALUE": title, "YEAR": "Year"},
     )
+    return fig
+
+def create_net_trade_lineplot(df):
+
+    reshaped_df = df.pivot(index= ['YEAR_MONTH', 'YEAR', 'PROVINCE', 'SECTOR'],
+                           columns='TRADE_FLOW', 
+                           values='FULL_VALUE').reset_index()
+    
+    reshaped_df['NET'] = reshaped_df['Domestic export'] - reshaped_df['Import']
+    df_annual = reshaped_df.groupby(['YEAR','PROVINCE','SECTOR']).agg({'NET': 'sum'}).reset_index()
+    df_annual = df_annual.groupby('YEAR').agg({
+        'NET': 'sum',
+        }).reset_index()
+    
+    fig = px.line(df_annual,
+                  x="YEAR",
+                  y="NET",
+                  title='Aggregate Net Trade by Year',
+                  subtitle='Net Trade is defined as total exports subtracted by total imports to represent our trade surplus',
+                  labels={"VALUE": 'NET TRADE', "YEAR": "Year"},
+                  )
     return fig
 
 def create_total_trade_card(df, trade_flow):
@@ -98,9 +119,11 @@ app.layout = html.Div([
         ],
         id="export_card_div",
         style={'display': 'inline-block', 'width': '45%'})
-    ], style={'display': 'flex', 'justify-content': 'space-around'}),
+        ], style={'display': 'flex', 'justify-content': 'space-around'}),
 
-    dcc.Graph(id="trade_balance_chart"),
+    dcc.Graph(id="trade_balance_chart",
+              figure=create_net_trade_lineplot(df),
+              style={'width': '85%', 'display': 'inline-block'}),
 
     html.Div([
         dcc.Graph(id="import_bar_chart", style={'width': '30%', 'display': 'inline-block'}),
@@ -162,7 +185,7 @@ def update_historical_charts(selected_province, selected_sector):
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
-def update_total_trade_cards(selected_province, selected_sector):
+def update_total_trade_card(selected_province, selected_sector):
     filtered_df = df.copy()
 
     if selected_province != "All":
@@ -175,5 +198,24 @@ def update_total_trade_cards(selected_province, selected_sector):
 
     return import_card, export_card
 
+@app.callback(
+    Output("trade_balance_chart", "figure"),
+    [Input("province-dropdown", "value"),
+     Input("sector-dropdown", "value")]
+)
+
+def update_net_trade_lineplot(selected_province, selected_sector):
+    filtered_df = df.copy()
+
+    if selected_province != "All":
+        filtered_df = filtered_df[filtered_df["PROVINCE"] == selected_province]
+    if selected_sector != "All":
+        filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
+
+    net_trade_lineplot = create_net_trade_lineplot(filtered_df)
+
+    return net_trade_lineplot
+
 if __name__ == '__main__':
     app.run_server(debug=False)
+    
