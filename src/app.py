@@ -54,8 +54,8 @@ def create_net_trade_lineplot(df):
         )
         .properties(
             title="Aggregate Net Trade by Year",
-            width=600,
-            height=400
+            width=400,
+            height=220
         )
         .configure_axis(grid=True)
         .interactive()
@@ -84,7 +84,7 @@ def create_total_trade_card(df, trade_flow):
                    className="card-text",
                    style={"color": text_color})
         ]),
-        style={"width": "18rem"},
+        style={"width": "18rem", "height": "7rem"},
     )
 
     return card
@@ -100,7 +100,7 @@ def create_historical_chart(filtered_df, title):
             y=alt.Y("VALUE:Q", title=title),
             tooltip=["YEAR", "VALUE"]
         )
-        .properties(title=title, width=400, height=300)
+        .properties(title=title, width=300, height=100)
         .interactive()
     )
     return chart.to_dict()
@@ -130,20 +130,22 @@ def get_map_chart(df, selected_province):
 
     aggr_data = get_agg_geom_data(df)
 
-    default_color = alt.Color(
-                        'NET_TRADE:Q', 
-                        scale=alt.Scale(scheme='redyellowgreen'),
-                        legend=alt.Legend(title="Net Trade")
-                    )
-    color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
-        alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
-        default_color,
-        alt.value("#ECECEC" ) 
-    )
+    if not selected_province or "All" in selected_province:
+        color_encoding = alt.Color(
+            'NET_TRADE:Q', 
+            scale=alt.Scale(scheme='redyellowgreen'),
+            legend=alt.Legend(title="Net Trade")
+        )
+    else:
+        color_encoding = alt.condition(
+            alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
+            alt.Color('NET_TRADE:Q', scale=alt.Scale(scheme='redyellowgreen')),
+            alt.value("#ECECEC")
+        )
 
     hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
 
-    map_chart = alt.Chart(aggr_data, width=600, height=500).mark_geoshape(
+    map_chart = alt.Chart(aggr_data, width=700, height=300).mark_geoshape(
         strokeWidth=2
     ).encode(
         tooltip=['PROVINCE:N', alt.Tooltip('NET_TRADE:Q', format=',')],
@@ -151,8 +153,8 @@ def get_map_chart(df, selected_province):
         stroke=alt.condition(hover, alt.value('white'), alt.value('#222222')),
         order=alt.condition(hover, alt.value(1), alt.value(0))
     ).properties(
-        width=600,
-        height=500
+        width=700,
+        height=400
     ).configure(
         background='transparent'
     ).project(
@@ -167,75 +169,51 @@ def get_map_chart(df, selected_province):
 
 app.layout = dbc.Container([
     dbc.Row([
-        dbc.Col([
-            html.H1('Maple-Eagle-Trade-Tracker'),
-            html.Br(),
-        ]),
-    ]),
+        dbc.Col(html.H2("Maple Eagle Trade Tracker", className="text-center"), width=12)
+    ], className="mb-1"),
     
     dbc.Row([
         dbc.Col([
             html.Label("Select Trade Sector"),
-            sector_dropdown,
-        ], width=6),
-        
+            sector_dropdown
+        ], width=3),  
         dbc.Col([
             html.Label("Select Province/Territory"),
-            province_dropdown,
-        ], width=6)
-    ], className="mb-4"),
-
-    dbc.Row([
-        dbc.Col([html.H1('Maple-Eagle-Trade-Tracker'), html.Br()])
-    ]),
-
-
-    dbc.Row([
-        dbc.Col([dbc.Card(id="import_card")], width=6),
-        dbc.Col([dbc.Card(id="export_card")], width=6)
-    ]),
-
-    dbc.Row([
-        dbc.Col([dvc.Vega(id="trade_balance_chart")], width=12)
-    ]),
-
-    dbc.Row([
-        dbc.Col([
-            dvc.Vega(id='bar1', spec={})
-        ], md=6),
-        dbc.Col([
-            dvc.Vega(id='bar2', spec={})
-        ], md=6)
-    ]),
+            province_dropdown
+        ], width=3) 
+    ], className="mb-1 justify-content-center"),
     
     dbc.Row([
         dbc.Col([
-            dvc.Vega(
-                id="historical_import_chart",
-                spec=create_historical_chart(df[df["TRADE_FLOW"] == "Import"], "Annual Import"),  
-                style={'width': '100%'}
-            )
-        ], width=6),
-        
+            dbc.Card(id="import_card", style={"width": "10rem"}), 
+            html.Br(),
+            dbc.Card(id="export_card", style={"width": "10rem"})  
+        ], width=3),  
+
         dbc.Col([
-            dvc.Vega(
-                id="historical_export_chart",
-                spec=create_historical_chart(df[df["TRADE_FLOW"] == "Domestic export"], "Annual Export"),  
-                style={'width': '100%'}
-            )
-        ], width=6)
-    ]),
+            dvc.Vega(id="trade_balance_chart", style={"width": "16rem", "height": "20rem"})  
+        ], width=5),  
+        dbc.Col([
+            dbc.Row([dvc.Vega(id="historical_import_chart", style={"width": "80%", "height": "10rem"})]),  
+            dbc.Row([dvc.Vega(id="historical_export_chart", style={"width": "80%", "height": "10rem"})])   
+        ], width=3)
+
+    ], className="mb-1"),
+    
 
     dbc.Row([
         dbc.Col([
-            dvc.Vega(
-                id="trade_geographical_map",
-                spec=get_map_chart(processed_df, ['All']).to_dict(format="vega"),  
-                style={'width': '100%'}
-            )
-        ], width=12)
-    ])
+            dvc.Vega(id="trade_geographical_map", style={"width": "100%", "height": "35rem"})  
+      ], width=6), 
+    
+     dbc.Col([
+        dbc.Row([dbc.Col(dvc.Vega(id="bar1", style={"width": "100%", "height": "14rem"}))], className="mb-0"), 
+        dbc.Row([dbc.Col(dvc.Vega(id="bar2", style={"width": "100%", "height": "14rem"}))], className="mb-0")
+      ], width=4)  
+    ], className="mb-1")
+    
 ], fluid=True)
+
 
 @app.callback(
     [Output("import_card", "children"),
@@ -288,8 +266,8 @@ def create_chart(province):
                 alt.Tooltip('sum(FULL_VALUE)', title='Total export value:', format=',')  
             ]
         ).properties(
-            width=500,
-            height=400,
+            width=300,
+            height=150,
             title='Exports to the US in 2024 by sector'
         ).to_dict()
     )
@@ -307,11 +285,11 @@ def create_chart(province):
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
-                alt.Tooltip('sum(FULL_VALUE)', title='Total import value:', format=',')  # Format for readability
+                alt.Tooltip('sum(FULL_VALUE)', title='Total import value:', format=',') 
             ]
         ).properties(
-            width=500,
-            height=400,
+            width=300,
+            height=150,
             title='Imports from the US in 2024 by sector'
         ).to_dict()
     )
