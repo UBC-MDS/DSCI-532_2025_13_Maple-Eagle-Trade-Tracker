@@ -100,7 +100,7 @@ def create_historical_chart(filtered_df, title):
             y=alt.Y("VALUE:Q", title=title),
             tooltip=["YEAR", "VALUE"]
         )
-        .properties(title=title, width=300, height=100)
+        .properties(title=title, width=300, height=88)
         .interactive()
     )
     return chart.to_dict()
