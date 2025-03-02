@@ -22,4 +22,8 @@ dependencies:
   - dash=2.14.2
   - altair=5.1.2
   - dash-bootstrap-components=1.7.1
-  - vegafusion>=1.4.0
+  - vegafusion>=2.0.1
+  - geopandas=1.0.1
+  - pip
+  - pip:
+      - dash-vega-components
