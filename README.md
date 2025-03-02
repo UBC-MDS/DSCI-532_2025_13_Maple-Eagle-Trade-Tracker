@@ -1,7 +1,39 @@
 # Maple Eagle Trade Tracker
 
-Welcome to the **Maple Eagle Trade Tracker**! This data-driven dashboard is designed to visualize trade tariffs between the US and Canada. Developed for government use, this tool provides critical insights to support policy decisions in response to the **2025 tariff bans on Canada**. By offering real-time analytics and trend monitoring, the dashboard helps policymakers assess the impact of trade regulations and make informed economic decisions.  
+Welcome to the **Maple Eagle Trade Tracker**! 
 
+In light of the tariffs imposed on Canadian goods by the government of the United States, the Canadian government faces the challenge of understanding how the US tariffs will impact different Canadian businesses and how Canada can best formulate retaliatory tariffs in response.  
+
+The **Maple Eagle Trade Tracker** is an interactive dashboard that visualizes trade data between Canada and the United States. It allows users to explore key insights, including which Canadian sectors export the most to the U.S. and which U.S. sectors export the most to Canada. The dashboard also tracks trade trends over time and provides detailed breakdowns by province and sector. By offering real-time analytics, the dashboard can aid Canadian policymakers assess the impact of the tariffs and make informed policy decisions.  
+
+### Demo
+
+### Support
+Please open an [issue](https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker/issues) on our GitHub repository if you have any issues or enquiries. 
+
+
+### How to Get Started Locally
+
+If you're interested in running the app locally or contributing to its development, follow these high-level steps:
+
+1.  **Clone the repository** to your local machine.
+
+    ``` bash
+    git clone git@github.com:UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker.git
+    ```
+
+2.  **Install dependencies** We have provided a environment.yaml file to help you get started. You can install the dependencies by running:
+
+    ``` bash
+    conda env create —-file environment.yaml
+    conda activate maple_eagle
+    ```
+
+3.  **Run the app** Once the dependencies are installed, you can run the dashboard locally:
+
+    ``` bash
+    python src/app.py
+    ```
 
 # Contributors
 This project was created by
