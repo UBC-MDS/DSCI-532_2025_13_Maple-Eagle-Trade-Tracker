@@ -23,12 +23,13 @@ app.layout = dbc.Container([
         dbc.Col(
             [
                 dbc.Label('Select province'),
-                dcc.Checklist(id='province', 
+                dcc.Dropdown(id='province', 
                  options=df['PROVINCE'].value_counts().index, 
                  value=['Newfoundland and Labrador', 'Prince Edward Island', 'Nova Scotia',
                         'New Brunswick', 'Quebec', 'Ontario', 'Manitoba', 'Saskatchewan',
                         'Alberta', 'British Columbia', 'Yukon', 'Northwest Territories',
-                        'Nunavut']),
+                        'Nunavut'],
+                multi=True),
                 html.Br(),
             ],
             md=3
@@ -59,8 +60,12 @@ app.layout = dbc.Container([
 def create_chart(province):
     return(
         alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Domestic export') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('FULL_VALUE', title='Value'),
+        x=alt.X('sum(FULL_VALUE)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
+        tooltip=[
+                alt.Tooltip('SECTOR', title='Sector:'),  
+                alt.Tooltip('sum(FULL_VALUE)', title='Total export value:', format=',')  # Format for readability
+            ]
         ).properties(
             width=500,
             height=400,
@@ -75,8 +80,12 @@ def create_chart(province):
 def create_chart(province):
     return(
         alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Import') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('FULL_VALUE', title='Value'),
+        x=alt.X('sum(FULL_VALUE)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
+        tooltip=[
+                alt.Tooltip('SECTOR', title='Sector:'),  
+                alt.Tooltip('sum(FULL_VALUE)', title='Total import value:', format=',')  # Format for readability
+            ]
         ).properties(
             width=500,
             height=400,

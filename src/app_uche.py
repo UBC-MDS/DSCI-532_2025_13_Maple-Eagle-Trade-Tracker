@@ -23,6 +23,7 @@ province_dropdown = dcc.Dropdown(
     id='province-dropdown',
     options=province_options,
     value='All',
+    multi = True,
     clearable=False,
 )
 
@@ -30,6 +31,7 @@ sector_dropdown = dcc.Dropdown(
     id='sector-dropdown',
     options=sector_options,
     value='All',
+    multi = True,
     clearable=False,
 )
 
@@ -44,42 +46,40 @@ def create_historical_chart(filtered_df, trade_flow, title):
     )
     return fig
 
-def get_agg_geom_data(df, filter_cols):
+def get_agg_geom_data(df):
     """Aggregate the geometric data"""
     
     url = 'https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_1_states_provinces.zip'
     canadian_provinces = gpd.read_file(url).query("iso_a2 == 'CA'")[
-        ['name', 'postal', 'latitude', 'longitude', 'geometry']
+        ['name', 'geometry']
     ]
     canadian_provinces.columns = [col.upper() for col in canadian_provinces.columns]
     
-    geo_data = df.merge(canadian_provinces, how='inner', left_on='PROVINCE', right_on='NAME')
-    geo_data = geo_data.drop(columns=['NAME', 'YEAR', 'YEAR_MONTH', 'TRADE_PARTNER', 'EXPORT', 'IMPORT', 'POSTAL', 'LATITUDE', 'LONGITUDE'])
+    aggr_data = df.groupby('PROVINCE')[['NET_TRADE']].sum().reset_index()
+    geo_data = aggr_data.merge(canadian_provinces, how='inner', 
+                               left_on='PROVINCE', right_on='NAME')
+    geo_data = geo_data.drop(columns=['NAME'])
     geo_data = gpd.GeoDataFrame(geo_data, geometry='GEOMETRY')
 
-    aggr_data = geo_data.dissolve(by=filter_cols, aggfunc='sum')[['NET_TRADE', 'GEOMETRY']]
-    aggr_data = aggr_data.reset_index()
+    return geo_data
 
-    return aggr_data
-
-def get_map_chart(df, filter_cols, selected_province):
+def get_map_chart(df, selected_province):
     """Returns a geographical map chart object"""
     
-    aggr_data = get_agg_geom_data(df, filter_cols)
+    aggr_data = get_agg_geom_data(df)
     
-    # Determine color scale logic
-    if selected_province == "All":
-        # Full scale for net trade
-        color_encoding = alt.Color(
-            'NET_TRADE:Q', 
-            scale=alt.Scale(scheme='redyellowgreen'),
-            legend=alt.Legend(title="Net Trade")
-        )
-    else:
-        # Highlight only selected province (green/red)
-        net_trade_value = aggr_data["NET_TRADE"].values[0] if not aggr_data.empty else 0
-        province_color = "green" if net_trade_value > 0 else "red"
-        color_encoding = alt.value(province_color)
+    default_color = alt.Color(
+                        'NET_TRADE:Q', 
+                        scale=alt.Scale(scheme='redyellowgreen'),
+                        legend=alt.Legend(title="Net Trade")
+                    )
+    # Full color scale for net trade across all provinces
+    # Conditional coloring: selected provinces use the net trade scale, others are light gray
+    color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
+        alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
+        default_color,
+        alt.value("#ECECEC" ) 
+    )
 
 
     hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
@@ -120,7 +120,7 @@ app.layout = html.Div([
     ], style={'display': 'flex', 'justify-content': 'space-around'}),
 
     html.Div(
-        [dvc.Vega(id="trade_geographical_map", spec=get_map_chart(processed_df, ['PROVINCE'], 'All').to_dict(format="vega"))],
+        [dvc.Vega(id="trade_geographical_map", spec=get_map_chart(processed_df, ['All']).to_dict(format="vega"))],
         style={
         'display': 'flex', 
         'justifyContent': 'center', 
@@ -161,27 +161,27 @@ app.layout = html.Div([
     ])
 ])
 
-@app.callback(
-    [Output("historical_import_chart", "figure"),
-     Output("historical_export_chart", "figure")],
-    [Input("province-dropdown", "value"),
-     Input("sector-dropdown", "value")]
-)
+# @app.callback(
+#     [Output("historical_import_chart", "figure"),
+#      Output("historical_export_chart", "figure")],
+#     [Input("province-dropdown", "value"),
+#      Input("sector-dropdown", "value")]
+# )
 
-def update_historical_charts(selected_province, selected_sector):
-    filtered_df = df.copy()
-    if selected_province != "All":
-        filtered_df = filtered_df[filtered_df["PROVINCE"] == selected_province]
-    if selected_sector != "All":
-        filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
+# def update_historical_charts(selected_province, selected_sector):
+#     filtered_df = df.copy()
+#     if selected_province != "All":
+#         filtered_df = filtered_df[filtered_df["PROVINCE"] == selected_province]
+#     if selected_sector != "All":
+#         filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
     
-    import_df = filtered_df[filtered_df["TRADE_FLOW"] == "Import"]
-    export_df = filtered_df[filtered_df["TRADE_FLOW"] == "Domestic export"]
+#     import_df = filtered_df[filtered_df["TRADE_FLOW"] == "Import"]
+#     export_df = filtered_df[filtered_df["TRADE_FLOW"] == "Domestic export"]
     
-    import_chart = create_historical_chart(import_df, "Import", "Annual Import")
-    export_chart = create_historical_chart(export_df, "Domestic export", "Annual Export")
+#     import_chart = create_historical_chart(import_df, "Import", "Annual Import")
+#     export_chart = create_historical_chart(export_df, "Domestic export", "Annual Export")
     
-    return import_chart, export_chart
+#     return import_chart, export_chart
 
 
 @app.callback(
@@ -194,24 +194,15 @@ def update_map_chart(selected_province, selected_sector):
     
     data_path = "data/clean/processed_data.csv"
     processed_data = pd.read_csv(data_path)
-    processed_data['PROVINCE'] = processed_data['PROVINCE'].replace({'Quebec': 'Québec'})
     
     filtered_df = processed_data.copy()
-    filter_cols = ["PROVINCE"]
 
-    if selected_province == "All":
-        # If only a sector is selected, filter based on sector
-        if selected_sector != "All":
-            filter_cols = ["SECTOR"]
-            filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
-    else:
-        # Filter based on province and sector (if selected)
-        filtered_df = filtered_df[filtered_df["PROVINCE"] == selected_province]
-        if selected_sector != "All":
-            filtered_df = filtered_df[filtered_df["SECTOR"] == selected_sector]
+    if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
+        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]
+
 
     # Generate updated chart with filtered data
-    updated_chart = get_map_chart(filtered_df, filter_cols, selected_province)
+    updated_chart = get_map_chart(filtered_df, selected_province)
 
     return updated_chart.to_dict(format="vega")
 
