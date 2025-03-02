@@ -130,18 +130,16 @@ def get_map_chart(df, selected_province):
 
     aggr_data = get_agg_geom_data(df)
 
-    if not selected_province or "All" in selected_province:
-        color_encoding = alt.Color(
-            'NET_TRADE:Q', 
-            scale=alt.Scale(scheme='redyellowgreen'),
-            legend=alt.Legend(title="Net Trade")
-        )
-    else:
-        color_encoding = alt.condition(
-            alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
-            alt.Color('NET_TRADE:Q', scale=alt.Scale(scheme='redyellowgreen')),
-            alt.value("#ECECEC")
-        )
+    default_color = alt.Color(
+                        'NET_TRADE:Q', 
+                        scale=alt.Scale(scheme='redyellowgreen'),
+                        legend=alt.Legend(title="Net Trade")
+                    )
+    color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
+        alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
+        default_color,
+        alt.value("#ECECEC" ) 
+    )
 
     hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
 
