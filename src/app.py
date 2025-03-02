@@ -208,7 +208,25 @@ app.layout = dbc.Container([
         dbc.Row([dbc.Col(dvc.Vega(id="bar1", style={"width": "100%", "height": "14rem"}))], className="mb-0"), 
         dbc.Row([dbc.Col(dvc.Vega(id="bar2", style={"width": "100%", "height": "14rem"}))], className="mb-0")
       ], width=4)  
-    ], className="mb-1")
+    ], className="mb-1"),
+
+    dbc.Row([
+        dbc.Col([
+            html.P(
+            "Developed by Sopuruchi Chisom (@cs-uche), Bryan Lee (@BryanLee06), Alex Wong (@awlh18), and Yun Zhou (@Green-zy), "
+            "this dashboard provides an interactive visualization of Canada's 2024 trade metrics, helping policymakers identify "
+            "the most affected sectors and regions to support informed decision-making on economic policies. View the project on GitHub:",
+            className="small text-muted mb-1",
+            style={"max-width": "100%", "margin-top": "0px"}
+        ),
+        html.A(
+            "UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker",
+            href="https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker",
+            target="_blank",
+            className="small text-primary"
+        )
+        ], width=8, className="text-left mt-0")
+    ], className="mt-0 mb-0")
     
 ], fluid=True)
 
