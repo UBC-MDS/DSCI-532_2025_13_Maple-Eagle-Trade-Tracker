@@ -21,12 +21,14 @@ province_dropdown = dcc.Dropdown(
     id='province-dropdown',
     options=province_options,
     value='All',
+    multi = True,
     clearable=False,
 )
 sector_dropdown = dcc.Dropdown(
     id='sector-dropdown',
     options=sector_options,
     value='All',
+    multi = True,
     clearable=False,
 )
 
