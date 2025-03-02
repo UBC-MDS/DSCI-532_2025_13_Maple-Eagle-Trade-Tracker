@@ -214,7 +214,7 @@ app.layout = dbc.Container([
         dbc.Col([
             html.P(
             "Developed by Sopuruchi Chisom (@cs-uche), Bryan Lee (@BryanLee06), Alex Wong (@awlh18), and Yun Zhou (@Green-zy), "
-            "this dashboard provides an interactive visualization of Canada's 2024 trade metrics, helping policymakers identify "
+            "this dashboard provides an interactive visualization of Canada's 2014 - 2024 trade metrics, helping policymakers identify "
             "the most affected sectors and regions to support informed decision-making on economic policies. View the project on GitHub:",
             className="small text-muted mb-1",
             style={"max-width": "100%", "margin-top": "0px"}
