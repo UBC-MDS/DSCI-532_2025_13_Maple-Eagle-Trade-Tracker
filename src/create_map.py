@@ -6,7 +6,6 @@ def get_map_chart(df):
     """Returns a geographical map chart object"""
 
     aggr_data = get_agg_geom_data(df)
-    
     hover_selection = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
     multi_selection = alt.selection_point(fields=['PROVINCE'], on='click', empty=False, toggle=True)
     
@@ -23,12 +22,13 @@ def get_map_chart(df):
             offset=-75  
         )
     )
-    color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
+    color_encoding = alt.condition(
         multi_selection,
         default_color,
         alt.value("#ECECEC" ) 
     )
 
+  
     map_chart = alt.Chart(aggr_data).mark_geoshape(
         strokeWidth=2
     ).encode(
@@ -52,4 +52,3 @@ def get_map_chart(df):
     )
 
     return map_chart
-
