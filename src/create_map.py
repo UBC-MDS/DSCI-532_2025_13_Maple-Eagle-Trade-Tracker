@@ -6,38 +6,50 @@ def get_map_chart(df, selected_province):
     """Returns a geographical map chart object"""
 
     aggr_data = get_agg_geom_data(df)
-
+    
+    hover_selection = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
+    multi_selection = alt.selection_point(fields=['PROVINCE'], on='click', empty=False, toggle=True)
+    
     default_color = alt.Color(
-                        'NET_TRADE:Q', 
-                        scale=alt.Scale(scheme='redyellowgreen'),
-                        legend=alt.Legend(title="Net Trade")
-                    )
+        'NET_TRADE:Q', 
+        scale=alt.Scale(
+            scheme='redyellowgreen',
+            domain=[aggr_data["NET_TRADE"].min(), aggr_data["NET_TRADE"].max()],
+            nice=False
+        ),
+        legend=alt.Legend(
+            title="Net Trade (CAD)",
+            format="~s",
+            offset=-75  
+        )
+    )
     color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
-        alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
+        multi_selection,
         default_color,
         alt.value("#ECECEC" ) 
     )
 
-    hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
-
-    map_chart = alt.Chart(aggr_data, width=700, height=300).mark_geoshape(
+    map_chart = alt.Chart(aggr_data).mark_geoshape(
         strokeWidth=2
     ).encode(
-        tooltip=[alt.Tooltip('PROVINCE:N', title = 'Province:'), 
-                 alt.Tooltip('NET_TRADE:Q', format=',', title = 'Net Trade:')],
+        tooltip=[
+            alt.Tooltip('PROVINCE:N', title = 'Province:'), 
+            alt.Tooltip('NET_TRADE:Q', format='~s', title = 'Net Trade (CAD):')
+        ],
         color=color_encoding, 
-        stroke=alt.condition(hover, alt.value('white'), alt.value('#222222')),
-        order=alt.condition(hover, alt.value(1), alt.value(0))
+        stroke=alt.condition(hover_selection, alt.value('white'), alt.value('#222222')),
+        order=alt.condition(hover_selection, alt.value(1), alt.value(0))
     ).properties( # make this a proportion of the screen size
-        width=1000,
-        height=500
+        width=800,
+        height=450
     ).configure(
         background='transparent'
     ).project(
         'transverseMercator',
         rotate=[90, 0, 0]
     ).add_params(
-        hover
+        hover_selection,
+        multi_selection
     )
 
     return map_chart
