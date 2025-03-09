@@ -114,7 +114,7 @@ def create_total_trade_card(df, trade_flow):
 
 def create_historical_chart(filtered_df, title):
     grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({"VALUE": "sum"}) 
-    grouped_df["VALUE"] = grouped_df["VALUE"] / 1_000_000
+    grouped_df["VALUE"] = grouped_df["VALUE"] / 1_000
     
     chart = (
         alt.Chart(grouped_df)
