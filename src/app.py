@@ -311,11 +311,12 @@ def create_chart(province):
     )
 
 @app.callback(
-    Output("trade_geographical_map", "spec"),
-    [Input("province-dropdown", "value"),
-     Input("sector-dropdown", "value")]
+    [Output("trade_geographical_map", "spec"),
+     Output("province-dropdown", "value")],
+    [Input("sector-dropdown", "value"),
+     Input("trade_geographical_map", "clickData")]
 )
-def update_map_chart(selected_province, selected_sector):
+def update_map_chart(selected_sector, click_data):
     """Updates the trade map based on user selections"""
     
     filtered_df = processed_df.copy()
@@ -323,9 +324,12 @@ def update_map_chart(selected_province, selected_sector):
     if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]
 
-    updated_chart = get_map_chart(filtered_df, selected_province)
+    updated_chart = get_map_chart(filtered_df)
+    selected_provinces = []
+    if click_data and 'points' in click_data:
+        selected_provinces = [point['PROVINCE'] for point in click_data['points']]
 
-    return updated_chart.to_dict(format="vega")
+    return updated_chart.to_dict(format="vega"), selected_provinces
 
 @app.callback(
     [Output("historical_import_chart", "spec"),

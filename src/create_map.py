@@ -1,7 +1,7 @@
 import altair as alt
 from data import get_agg_geom_data, get_processed_data
 
-def get_map_chart(df, selected_province):
+def get_map_chart(df):
     
     """Returns a geographical map chart object"""
 
@@ -37,8 +37,7 @@ def get_map_chart(df, selected_province):
             alt.Tooltip('NET_TRADE:Q', format='~s', title = 'Net Trade (CAD):')
         ],
         color=color_encoding, 
-        stroke=alt.condition(hover_selection, alt.value('white'), alt.value('#222222')),
-        order=alt.condition(hover_selection, alt.value(1), alt.value(0))
+        stroke=alt.condition(hover_selection, alt.value('white'), alt.value('#222222'))
     ).properties( # make this a proportion of the screen size
         width=800,
         height=450
@@ -53,5 +52,4 @@ def get_map_chart(df, selected_province):
     )
 
     return map_chart
-
 
