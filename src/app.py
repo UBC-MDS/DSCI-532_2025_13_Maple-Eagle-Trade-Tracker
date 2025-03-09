@@ -19,18 +19,26 @@ sector_options = [{'label': 'All', 'value': 'All'}] + [
     {'label': sector, 'value': sector} for sector in sorted(df['SECTOR'].dropna().unique())
 ]
 
+province_options = [
+    {'label': province, 'value': province} for province in sorted(df['PROVINCE'].dropna().unique())
+]
+
 province_dropdown = dcc.Dropdown(
     id='province-dropdown',
     options=province_options,
-    value=['All'],
+    value=[province_options[1]["value"]],
     clearable=False,
     multi=True
 )
 
+sector_options = [
+    {'label': sector, 'value': sector} for sector in sorted(df['SECTOR'].dropna().unique())
+]
+
 sector_checklist = dcc.Checklist(
     id='sector-dropdown',
     options=sector_options,
-    value=['All'],  
+    value=[sector_options[1]["value"]],  
     inputStyle={"margin-right": "5px", "margin-left": "10px"},  
     labelStyle={
         "display": "block", 
