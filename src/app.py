@@ -4,6 +4,7 @@ import pandas as pd
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
+from create_map import get_map_chart
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
@@ -105,64 +106,6 @@ def create_historical_chart(filtered_df, title):
     )
     return chart.to_dict()
 
-def get_agg_geom_data(df):
-    """Aggregate the geometric data using processed_df"""
-    
-    url = 'https://naciscdn.org/naturalearth/50m/cultural/ne_50m_admin_1_states_provinces.zip'
-    canadian_provinces = gpd.read_file(url).query("iso_a2 == 'CA'")[
-        ['name', 'geometry']
-    ]
-    canadian_provinces.columns = [col.upper() for col in canadian_provinces.columns]
-
-    if 'NET_TRADE' not in df.columns:
-        raise KeyError("NET_TRADE column is missing from the processed dataset.")
-
-    aggr_data = df.groupby('PROVINCE')[['NET_TRADE']].sum().reset_index()
-    geo_data = aggr_data.merge(canadian_provinces, how='inner', left_on='PROVINCE', right_on='NAME')
-    geo_data = geo_data.drop(columns=['NAME'])
-    geo_data = gpd.GeoDataFrame(geo_data, geometry='GEOMETRY')
-
-    return geo_data
-
-
-def get_map_chart(df, selected_province):
-    """Returns a geographical map chart object"""
-
-    aggr_data = get_agg_geom_data(df)
-
-    default_color = alt.Color(
-                        'NET_TRADE:Q', 
-                        scale=alt.Scale(scheme='redyellowgreen'),
-                        legend=alt.Legend(title="Net Trade")
-                    )
-    color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
-        alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
-        default_color,
-        alt.value("#ECECEC" ) 
-    )
-
-    hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
-
-    map_chart = alt.Chart(aggr_data, width=700, height=300).mark_geoshape(
-        strokeWidth=2
-    ).encode(
-        tooltip=['PROVINCE:N', alt.Tooltip('NET_TRADE:Q', format=',')],
-        color=color_encoding, 
-        stroke=alt.condition(hover, alt.value('white'), alt.value('#222222')),
-        order=alt.condition(hover, alt.value(1), alt.value(0))
-    ).properties(
-        width=700,
-        height=400
-    ).configure(
-        background='transparent'
-    ).project(
-        'transverseMercator',
-        rotate=[90, 0, 0]
-    ).add_params(
-        hover
-    )
-
-    return map_chart
 
 
 app.layout = dbc.Container([
