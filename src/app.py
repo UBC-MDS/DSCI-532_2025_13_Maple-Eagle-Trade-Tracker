@@ -153,30 +153,44 @@ def get_map_chart(df, selected_province):
     """Returns a geographical map chart object"""
 
     aggr_data = get_agg_geom_data(df)
+    aggr_data["NET_TRADE"] = aggr_data["NET_TRADE"] / 1_000_000
 
     default_color = alt.Color(
-                        'NET_TRADE:Q', 
-                        scale=alt.Scale(scheme='redyellowgreen'),
-                        legend=alt.Legend(title="Net Trade")
-                    )
+        'NET_TRADE:Q', 
+        scale=alt.Scale(
+            scheme='redyellowgreen',
+            domain=[aggr_data["NET_TRADE"].min(), aggr_data["NET_TRADE"].max()],
+            nice=False  
+        ),
+        legend=alt.Legend(
+            title="Net Trade (Million CAD)",  
+            format="~s",
+            orient="right",  
+            offset=-75  
+        )
+    )
+
     color_encoding = default_color if not selected_province or "All" in selected_province else alt.condition(
         alt.FieldOneOfPredicate(field='PROVINCE', oneOf=selected_province),
         default_color,
-        alt.value("#ECECEC" ) 
+        alt.value("#ECECEC")
     )
 
     hover = alt.selection_point(fields=['PROVINCE'], on='pointerover', empty=False)
 
-    map_chart = alt.Chart(aggr_data, width=700, height=300).mark_geoshape(
+    map_chart = alt.Chart(aggr_data, width=800, height=500).mark_geoshape(
         strokeWidth=2
     ).encode(
-        tooltip=['PROVINCE:N', alt.Tooltip('NET_TRADE:Q', format=',')],
+        tooltip=[
+            alt.Tooltip('PROVINCE:N', title="Province"), 
+            alt.Tooltip('NET_TRADE:Q', format=".2f", title="Net Trade (Million CAD)")  
+        ],
         color=color_encoding, 
         stroke=alt.condition(hover, alt.value('white'), alt.value('#222222')),
         order=alt.condition(hover, alt.value(1), alt.value(0))
     ).properties(
-        width=700,
-        height=400
+        width=800,
+        height=450
     ).configure(
         background='transparent'
     ).project(
@@ -187,6 +201,7 @@ def get_map_chart(df, selected_province):
     )
 
     return map_chart
+
 
 def create_chart_card(title, chart_id, height="18rem"):
     """Create a chart card with adjustable height"""
