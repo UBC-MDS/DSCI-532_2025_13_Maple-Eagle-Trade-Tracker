@@ -49,6 +49,7 @@ def preprocess_data_and_calculate_net_trade(input_path: str = "../data/clean/cle
                                        columns='TRADE_FLOW').reset_index()
     preprocessed_data.columns = [col.upper() for col in preprocessed_data.columns]
     preprocessed_data['PROVINCE'] = preprocessed_data['PROVINCE'].replace({'Quebec': 'Québec'})
+    preprocessed_data['PROVINCE'] = preprocessed_data['PROVINCE'].str.strip().astype('category')
     
     if 'DOMESTIC EXPORT' in preprocessed_data.columns:
         preprocessed_data.rename(columns={'DOMESTIC EXPORT': 'EXPORT'}, inplace=True)
