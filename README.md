@@ -7,7 +7,7 @@ In light of the tariffs imposed on Canadian goods by the government of the Unite
 The **Maple Eagle Trade Tracker** is an interactive dashboard that visualizes trade data between Canada and the United States. It allows users to explore key insights, including which Canadian sectors export the most to the U.S. and which U.S. sectors export the most to Canada. The dashboard also tracks trade trends over time and provides detailed breakdowns by province and sector. By offering real-time analytics, the dashboard can aid Canadian policymakers assess the impact of the tariffs and make informed policy decisions.  
 
 ### Demo
-![demo](img/demo.gif)
+![demo](img/demo2.gif)
 
 ### Support
 Please open an [issue](https://github.com/UBC-MDS/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker/issues) on our GitHub repository if you have any issues or enquiries. 
@@ -30,10 +30,10 @@ If you're interested in running the app locally or contributing to its developme
     conda activate maple_eagle
     ```
 
-3.  **Run the app** Once the dependencies are installed, you can run the dashboard locally:
+3.  **Run the app** Once the dependencies are installed, you can run the dashboard locally with **~/DSCI-532_2025_13_Maple-Eagle-Trade-Tracker/src** set as the current directory:
 
     ``` bash
-    python src/app.py
+    python app_modularized.py
     ```
 
 # Contributors
