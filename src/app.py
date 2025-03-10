@@ -11,24 +11,22 @@ server = app.server
 df = pd.read_csv('data/clean/clean_data.csv')
 processed_df = pd.read_csv('data/clean/processed_data.csv') 
 
-province_options = [{'label': 'All', 'value': 'All'}] + [
-    {'label': province, 'value': province} for province in sorted(df['PROVINCE'].dropna().unique())
-]
-
-sector_options = [{'label': 'All', 'value': 'All'}] + [
-    {'label': sector, 'value': sector} for sector in sorted(df['SECTOR'].dropna().unique())
-]
-
 province_options = [
     {'label': province, 'value': province} for province in sorted(df['PROVINCE'].dropna().unique())
 ]
 
-province_dropdown = dcc.Dropdown(
+province_checklist = dcc.Checklist(
     id='province-dropdown',
     options=province_options,
-    value=[province_options[1]["value"]],
-    clearable=False,
-    multi=True
+    value=[province_options[0]["value"]],  
+    inputStyle={"margin-right": "5px", "margin-left": "10px"},  
+    labelStyle={
+        "display": "block", 
+        "margin-left": "20px", 
+        "text-indent": "-29px",
+        "font-size": "12px"  
+    },
+    style={"max-width": "180px", "word-wrap": "break-word"}
 )
 
 sector_options = [
@@ -225,40 +223,35 @@ def create_chart_card_trend_line(title, chart_id, height="12rem", width="100%"):
         style={"width": "100%", "height": height, "padding": "0.2rem"}
     )
 
-def create_control_card(title, component_id, component):
+def create_control_card(title, component_id, component, height="30rem"):
     return dbc.Card(
         dbc.CardBody([
             html.H5(title, className="card-title", style={"font-size": "18px"}),
             component
         ]),
         className="mb-2",
-        style={"width": "80%", "height": "38rem", "padding": "0.5rem"}
+        style={"width": "80%", "height": height, "padding": "0.5rem"}
     )
 
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
-            html.Label("Select Province/Territory"),
-            province_dropdown
-        ], width=3)
-    ], className="mb-1 justify-content-center"),
-
-    dbc.Row([
-        dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                    html.H4("Maple Eagle Trade Tracker", className="text-center")
-                ]), style={"width": "80%", "height": "6.8rem", "margin-top": "0rem"}  
-            ),
+            
             html.Br(),
-            create_control_card("Select Trade Sector", "sector-dropdown", sector_checklist)
-        ], width=2, style={"padding": "0.2rem", "margin-right": "-3rem"}), 
+            create_control_card("Select Province/Territory", "province-dropdown", province_checklist, height="21.5rem"),
+            create_control_card("Select Trade Sector", "sector-dropdown", sector_checklist, height="32rem")
+        ], width=2, style={"padding": "0.5rem", "margin-right": "-3rem", "margin-top": "-0.8rem"}), 
 
         dbc.Col([
             dbc.Row([
-                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "5.5rem"}), 
-                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "5.5rem"}),
-                dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "1.4rem"})  
+                dbc.Card(
+                dbc.CardBody([
+                    html.H4("Maple Eagle Trade Tracker", className="text-center")
+                ]), style={"width": "20%", "height": "6.8rem", "margin-top": "1rem", "margin-left": "0.8rem"}  
+            ),
+                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "0rem", "margin-top": "1rem"}), 
+                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "-3.5rem", "margin-top": "1rem"}),
+                dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "-2.7rem", "margin-top": "1rem"})  
             ], className="mb-1"),
 
             dbc.Row([
