@@ -23,6 +23,7 @@ from components.outputs import(
 )
 
 df = clean_data()
+processed_df = pd.read_csv('../data/clean/processed_data.csv') 
 
 @callback(
     [Output("import_card", "children"),
@@ -111,7 +112,7 @@ def create_chart(province):
 def update_map_chart(selected_province, selected_sector):
     """Updates the trade map based on user selections"""
     
-    filtered_df = df.copy()
+    filtered_df = processed_df.copy()
 
     if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]

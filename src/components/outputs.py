@@ -179,12 +179,12 @@ def create_chart_card_trend_line(title, chart_id, height="12rem", width="100%"):
         style={"width": "100%", "height": height, "padding": "0.2rem"}
     )
 
-def create_control_card(title, component_id, component):
+def create_control_card(title, component_id, component, height="30rem"):
     return dbc.Card(
         dbc.CardBody([
             html.H5(title, className="card-title", style={"font-size": "18px"}),
             component
         ]),
         className="mb-2",
-        style={"width": "80%", "height": "38rem", "padding": "0.5rem"}
+        style={"width": "80%", "height": height, "padding": "0.5rem"}
     )
