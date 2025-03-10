@@ -29,21 +29,21 @@ server = app.server
 app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
-            dbc.Card(
-                dbc.CardBody([
-                    html.H4("Maple Eagle Trade Tracker", className="text-center")
-                ]), style={"width": "80%", "height": "6.8rem", "margin-top": "0rem"}  
-            ),
             html.Br(),
-            create_control_card("Select Trade Sector", "sector-dropdown", sector_checklist),
-            create_control_card("Select Province/Territory", "province-checklist", province_checklist)
-        ], width=2, style={"padding": "0.2rem", "margin-right": "-3rem"}), 
+            create_control_card("Select Province/Territory", "province-dropdown", province_checklist, height="21.5rem"),
+            create_control_card("Select Trade Sector", "sector-dropdown", sector_checklist, height="32rem")
+        ], width=2, style={"padding": "0.2rem", "margin-right": "-3rem", "margin-top": "-0.8rem"}), 
 
         dbc.Col([
             dbc.Row([
-                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "5.5rem"}), 
-                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "5.5rem"}),
-                dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "1.4rem"})  
+                dbc.Card(
+                dbc.CardBody([
+                    html.H4("Maple Eagle Trade Tracker", className="text-center")
+                ]), style={"width": "20%", "height": "7.1rem", "margin-top": "1rem", "margin-left": "0.8rem"}  
+            ),
+                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "0rem", "margin-top": "1rem"}), 
+                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "-2.5rem", "margin-top": "1rem"}),
+                dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "-2.7rem", "margin-top": "1rem"})  
             ], className="mb-1"),
 
             dbc.Row([
@@ -60,8 +60,8 @@ app.layout = dbc.Container([
             ], className="mb-1"),
 
             dbc.Row([
-                dbc.Col(create_chart_card("Imports from the US in 2024 by Sector", "bar2", height="13rem"), width=6, style={"width": "43rem"}),
-                dbc.Col(create_chart_card("Exports to the US in 2024 by Sector", "bar1", height="13rem"), width=6, style={"width": "43rem"})
+                dbc.Col(create_chart_card("Imports from the US in 2024 by Sector", "bar2", height="13rem"), width=6, style={"width": "42.8rem"}),
+                dbc.Col(create_chart_card("Exports to the US in 2024 by Sector", "bar1", height="13rem"), width=6, style={"width": "42.8rem"})
             ], className="mb-1"),
         ], width=10, style={"margin-left": "-0.5rem"}) 
     ], className="mb-1"),

@@ -4,12 +4,8 @@ from data import clean_data
 
 df = clean_data()
 
-province_options = [{'label': 'All', 'value': 'All'}] + [
+province_options = [
     {'label': province, 'value': province} for province in sorted(df['PROVINCE'].dropna().unique())
-]
-
-sector_options = [{'label': 'All', 'value': 'All'}] + [
-    {'label': sector, 'value': sector} for sector in sorted(df['SECTOR'].dropna().unique())
 ]
 
 province_checklist = dcc.Checklist(
