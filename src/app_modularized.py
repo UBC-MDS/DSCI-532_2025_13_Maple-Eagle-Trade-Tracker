@@ -37,10 +37,22 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Row([
                 dbc.Card(
-                dbc.CardBody([
-                    html.H4("Maple Eagle Trade Tracker", className="text-center")
-                ]), style={"width": "20%", "height": "7.1rem", "margin-top": "1rem", "margin-left": "0.8rem"}  
-            ),
+                    dbc.CardBody([
+                        html.H4("Maple Eagle Trade Tracker", className="text-center")
+                    ]),
+                    style={
+                        "width": "20%",
+                        "height": "7.1rem",
+                        "margin-top": "1rem",
+                        "margin-left": "0.8rem",
+                        "backgroundImage": "url('/assets/logo.png')",
+                        "backgroundSize": "cover",
+                        "backgroundPosition": "center",
+                        "backgroundRepeat": "no-repeat",
+                        "backgroundColor": "rgba(255, 255, 255, 0.75)",  
+                        "backgroundBlendMode": "overlay"  
+                    }   
+                ),
                 dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "0rem", "margin-top": "1rem"}), 
                 dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "-2.5rem", "margin-top": "1rem"}),
                 dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "-2.7rem", "margin-top": "1rem"})  
