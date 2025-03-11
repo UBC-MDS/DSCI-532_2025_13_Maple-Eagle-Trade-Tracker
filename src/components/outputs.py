@@ -7,12 +7,6 @@ import numpy as np
 
 def create_net_trade_lineplot(df):
     
-    # reshaped_df = df.pivot(index=['YEAR_MONTH', 'YEAR', 'PROVINCE', 'SECTOR'],
-    #                        columns='TRADE_FLOW', 
-    #                        values='FULL_VALUE').reset_index()
-
-    # reshaped_df['NET'] = reshaped_df['Domestic export'] - reshaped_df['Import']
-    # df_annual = reshaped_df.groupby(['YEAR', 'PROVINCE', 'SECTOR']).agg({'NET': 'sum'}).reset_index()
     df_annual = df.groupby('YEAR').agg({'NET_TRADE': 'sum'}).reset_index()
     df_annual["NET_TRADE"] = df_annual["NET_TRADE"] / 1_000_000  
 
@@ -65,28 +59,7 @@ def create_total_trade_card(df, trade_flow):
             total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
             total_trade_value = total_trade_value / 1000
             title = "Total Export Value in CAD (Thousands)"
-            text_color = 'green'        
-
-    # if trade_flow.lower() == 'import':
-    #     total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-    #     if total_trade_value > 999_999:
-    #         total_trade_value = total_trade_value / 1_000_000
-    #         title = "Total Import Value in CAD (Million)"
-    #         text_color = 'red'
-    #     else: 
-    #         title = "Total Import Value in CAD (Thousand)"
-    #         total_trade_value = total_trade_value/ 1000
-    #         text_color = 'red'
-    # else:
-    #     total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-    #     if total_trade_value > 999_999:
-    #         total_trade_value = total_trade_value / 1_000_000
-    #         title = "Total Export Value in CAD (Million)"
-    #         text_color = 'green'
-    #     else:
-    #         title = "Total Export Value in CAD (Thousand)"
-    #         total_trade_value = total_trade_value/ 1000
-    #         text_color = 'green' 
+            text_color = 'green'
 
     card = dbc.Card(
         dbc.CardBody([
