@@ -4,6 +4,7 @@ import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
 import numpy as np
+import pandas as pd
 
 def create_net_trade_lineplot(df):
     
@@ -34,6 +35,7 @@ def create_net_trade_lineplot(df):
 
 
 def create_total_trade_card(df, trade_flow):
+    df['YEAR'] = pd.to_numeric(df['YEAR'], errors='coerce')
     max_year = max(df['YEAR'])
 
     sum_by_trade_df = df[df['YEAR'] == max_year]
@@ -41,31 +43,31 @@ def create_total_trade_card(df, trade_flow):
     if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
         if trade_flow.lower() == 'import':
             total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = total_trade_value / 1_000_000
-            title = "Total Import Value in CAD (Million)"
+            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
+            title = "Total Import Value in CAD by Millions"
             text_color = 'red'
         else: 
             total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = total_trade_value / 1_000_000
-            title = "Total Export Value in CAD (Million)"
+            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
+            title = "Total Export Value in CAD by Millions"
             text_color = 'green'
     else:
         if trade_flow.lower() == 'import':
             total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = total_trade_value / 1000
-            title = "Total Import Value in CAD (Thousands)"
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            title = "Total Import Value in CAD in Thousands"
             text_color = 'red'
         else: 
             total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = total_trade_value / 1000
-            title = "Total Export Value in CAD (Thousands)"
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            title = "Total Export Value in CAD in Thousands"
             text_color = 'green'
 
     card = dbc.Card(
         dbc.CardBody([
             html.H6(title, className="card-title", 
                     style={"font-size": "1.2rem", "margin-bottom": "0.2rem"}),  
-            html.P(f"${total_trade_value:,.2f}",
+            html.P(total_trade_value,
                    className="card-text",
                    style={"color": text_color, "font-size": "1rem"}) 
         ]),
