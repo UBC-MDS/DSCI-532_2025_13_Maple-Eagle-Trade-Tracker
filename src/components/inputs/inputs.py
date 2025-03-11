@@ -1,8 +1,8 @@
 from dash import dcc
 import pandas as pd
-from data import clean_data
+from data.map_data import get_processed_data
 
-df = clean_data()
+df = get_processed_data()
 
 province_options = [
     {'label': province, 'value': province} for province in sorted(df['PROVINCE'].dropna().unique())
