@@ -3,27 +3,28 @@ import dash_bootstrap_components as dbc
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
+import numpy as np
 
 def create_net_trade_lineplot(df):
-    reshaped_df = df.pivot(index=['YEAR_MONTH', 'YEAR', 'PROVINCE', 'SECTOR'],
-                           columns='TRADE_FLOW', 
-                           values='FULL_VALUE').reset_index()
+    
+    # reshaped_df = df.pivot(index=['YEAR_MONTH', 'YEAR', 'PROVINCE', 'SECTOR'],
+    #                        columns='TRADE_FLOW', 
+    #                        values='FULL_VALUE').reset_index()
 
-    reshaped_df['NET'] = reshaped_df['Domestic export'] - reshaped_df['Import']
-    df_annual = reshaped_df.groupby(['YEAR', 'PROVINCE', 'SECTOR']).agg({'NET': 'sum'}).reset_index()
-    df_annual = df_annual.groupby('YEAR').agg({'NET': 'sum'}).reset_index()
-
-    df_annual["NET"] = df_annual["NET"] / 1_000_000  
+    # reshaped_df['NET'] = reshaped_df['Domestic export'] - reshaped_df['Import']
+    # df_annual = reshaped_df.groupby(['YEAR', 'PROVINCE', 'SECTOR']).agg({'NET': 'sum'}).reset_index()
+    df_annual = df.groupby('YEAR').agg({'NET_TRADE': 'sum'}).reset_index()
+    df_annual["NET_TRADE"] = df_annual["NET_TRADE"] / 1_000_000  
 
     chart = (
         alt.Chart(df_annual)
         .mark_line(point=True)
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("NET:Q", title="Net Trade (Million)", axis=alt.Axis(format="~s")),  
+            y=alt.Y("NET_TRADE:Q", title="Net Trade (Million)", axis=alt.Axis(format="~s")),  
             tooltip=[
                 alt.Tooltip("YEAR", title="Year"),
-                alt.Tooltip("NET", title="Net Trade (M)", format=".2f")  
+                alt.Tooltip("NET_TRADE", title="Net Trade (M)", format=".2f")  
             ]
         )
         .properties(
@@ -41,14 +42,14 @@ def create_net_trade_lineplot(df):
 def create_total_trade_card(df, trade_flow):
     max_year = max(df['YEAR'])
 
-    sum_by_trade_df = df[df['YEAR'] == max_year].groupby('TRADE_FLOW')['VALUE'].sum()
+    sum_by_trade_df = df[df['YEAR'] == max_year]
 
     if trade_flow.lower() == 'import':
-        total_trade_value = sum_by_trade_df.get("Import", 0) / 1_000_000 
+        total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0)) / 1_000_000 
         title = "Total Import Value in CAD (Million)"
         text_color = 'red'
     else:
-        total_trade_value = sum_by_trade_df.get("Domestic export", 0) / 1_000_000
+        total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0)) / 1_000_000
         title = "Total Export Value in CAD (Million)"
         text_color = 'green'
 
