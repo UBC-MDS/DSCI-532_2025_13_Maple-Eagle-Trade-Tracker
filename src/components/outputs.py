@@ -44,14 +44,49 @@ def create_total_trade_card(df, trade_flow):
 
     sum_by_trade_df = df[df['YEAR'] == max_year]
 
-    if trade_flow.lower() == 'import':
-        total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0)) / 1_000_000 
-        title = "Total Import Value in CAD (Million)"
-        text_color = 'red'
+    if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = total_trade_value / 1_000_000
+            title = "Total Import Value in CAD (Million)"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = total_trade_value / 1_000_000
+            title = "Total Export Value in CAD (Million)"
+            text_color = 'green'
     else:
-        total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0)) / 1_000_000
-        title = "Total Export Value in CAD (Million)"
-        text_color = 'green'
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = total_trade_value / 1000
+            title = "Total Import Value in CAD (Thousands)"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = total_trade_value / 1000
+            title = "Total Export Value in CAD (Thousands)"
+            text_color = 'green'        
+
+    # if trade_flow.lower() == 'import':
+    #     total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+    #     if total_trade_value > 999_999:
+    #         total_trade_value = total_trade_value / 1_000_000
+    #         title = "Total Import Value in CAD (Million)"
+    #         text_color = 'red'
+    #     else: 
+    #         title = "Total Import Value in CAD (Thousand)"
+    #         total_trade_value = total_trade_value/ 1000
+    #         text_color = 'red'
+    # else:
+    #     total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+    #     if total_trade_value > 999_999:
+    #         total_trade_value = total_trade_value / 1_000_000
+    #         title = "Total Export Value in CAD (Million)"
+    #         text_color = 'green'
+    #     else:
+    #         title = "Total Export Value in CAD (Thousand)"
+    #         total_trade_value = total_trade_value/ 1000
+    #         text_color = 'green' 
 
     card = dbc.Card(
         dbc.CardBody([
