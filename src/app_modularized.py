@@ -11,6 +11,7 @@ from components.outputs.outputs import(
 )
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.title = 'Maple Eagle Trade Tracker' 
 server = app.server
 
 app.layout = dbc.Container([
