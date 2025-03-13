@@ -16,7 +16,7 @@ def get_map_chart(df, selected_province):
         ),
         legend=alt.Legend(
             title="Net Trade (CAD)",
-            format="~s",
+            format=",.2f",
             orient="right", 
             offset=-75  
         )
@@ -35,7 +35,7 @@ def get_map_chart(df, selected_province):
     ).encode(
         tooltip=[
             alt.Tooltip('PROVINCE:N', title = 'Province:'), 
-            alt.Tooltip('NET_TRADE:Q', format='~s', title = 'Net Trade (CAD):')
+            alt.Tooltip('NET_TRADE:Q', format=',.2f', title = 'Net Trade (CAD):')
         ],
         color=color_encoding, 
         stroke=alt.condition(hover_selection, alt.value('white'), alt.value('#222222')),
