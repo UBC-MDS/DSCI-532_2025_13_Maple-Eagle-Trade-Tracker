@@ -1,6 +1,7 @@
 from dash import dcc
 import pandas as pd
-from data import clean_data
+from data.map_data import get_processed_data
+from data.data import clean_data
 
 df = clean_data()
 

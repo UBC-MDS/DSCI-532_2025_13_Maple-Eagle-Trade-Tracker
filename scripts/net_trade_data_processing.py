@@ -1,11 +1,11 @@
 import pandas as pd
 import logging
-from typing import Optional
+from utils import save_dataframe
 
 logging.basicConfig(level=logging.WARNING)
 
-def preprocess_data_and_calculate_net_trade(input_path: str = "../data/clean/clean_data.csv", 
-                                            save_to: str = "../data/clean/processed_data.csv") -> None:
+def preprocess_data_and_calculate_net_trade(input_path: str = "./data/clean/clean_data.csv", 
+                                            save_to: str = "./data/processed/processed_data.parquet") -> None:
     """
     Calculate net trade and preprocess data from a CSV file.
     This function reads trade data from a CSV file, preprocesses it by pivoting the data,
@@ -59,7 +59,7 @@ def preprocess_data_and_calculate_net_trade(input_path: str = "../data/clean/cle
         logging.warning("Warning: 'EXPORT' or 'IMPORT' column is missing, skipping NET TRADE calculation.")
 
     try:
-        preprocessed_data.to_csv(save_to, index=False)
+        save_dataframe(preprocessed_data, save_to, format="parquet")
     except Exception as e:
         logging.error(f"Error writing to {save_to}: {e}")
 
