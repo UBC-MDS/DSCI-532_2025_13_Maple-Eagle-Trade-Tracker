@@ -9,10 +9,14 @@ from components.outputs.outputs import(
     create_chart_card_trend_line,
     create_control_card
 )
+from cache import cache
+
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = 'Maple Eagle Trade Tracker' 
 server = app.server
+
+cache.init_app(server)
 
 app.layout = dbc.Container([
     dbc.Row([
