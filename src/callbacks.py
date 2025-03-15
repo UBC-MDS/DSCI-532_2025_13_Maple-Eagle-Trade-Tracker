@@ -23,9 +23,12 @@ from components.outputs.outputs import(
     create_control_card
 )
 from components.outputs.create_map import get_map_chart
+from cache import cache
+
 
 df = clean_data()
 processed_df = get_processed_data() 
+
 
 @callback(
     [Output("import_card", "children"),
@@ -33,6 +36,7 @@ processed_df = get_processed_data()
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
+@cache.memoize()
 def update_total_trade_card(selected_provinces, selected_sectors):
     filtered_df = df.copy()
 
@@ -51,6 +55,8 @@ def update_total_trade_card(selected_provinces, selected_sectors):
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
+
+@cache.memoize()
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
     filtered_df = df.copy()
 
@@ -66,6 +72,7 @@ def update_net_trade_lineplot(selected_provinces, selected_sectors):
     Output('bar1', 'spec'),
     Input('province-dropdown', 'value')
 )
+@cache.memoize()
 def create_chart(province):
     if "All" in province:
         province = df['PROVINCE'].unique()
@@ -88,6 +95,7 @@ def create_chart(province):
     Output('bar2', 'spec'),
     Input('province-dropdown', 'value')
 )
+@cache.memoize()
 def create_chart(province):
     if "All" in province:
         province = df['PROVINCE'].unique()
@@ -111,6 +119,7 @@ def create_chart(province):
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
+@cache.memoize()
 def update_map_chart(selected_province, selected_sector):
     """Updates the trade map based on user selections"""
     
@@ -129,6 +138,7 @@ def update_map_chart(selected_province, selected_sector):
     [Input("province-dropdown", "value"),
      Input("sector-dropdown", "value")]
 )
+@cache.memoize()
 def update_historical_charts(selected_provinces, selected_sectors):
     """Update the historical import and export charts based on dropdown selections."""
 
