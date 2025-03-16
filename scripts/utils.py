@@ -27,7 +27,7 @@ def save_dataframe(df, file_path, format="csv"):
     if format == "csv":
         df.to_csv(file_path, index=False)
     else:
-        df.to_parquet(file_path, index=False)
+        df.to_parquet(file_path, index=False, engine="pyarrow")
 
     return
 
