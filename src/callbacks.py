@@ -4,7 +4,7 @@ import pandas as pd
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data.map_data import (
+from data.data import (
     get_processed_data, 
     get_agg_geom_data)
 from components.inputs.inputs import (

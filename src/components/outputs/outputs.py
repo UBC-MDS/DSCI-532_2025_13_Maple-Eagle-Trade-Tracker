@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data.map_data import get_agg_geom_data
+from data.data import get_agg_geom_data
 import numpy as np
 import pandas as pd
 
