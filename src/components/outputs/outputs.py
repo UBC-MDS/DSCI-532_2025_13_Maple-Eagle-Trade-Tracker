@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data.map_data import get_agg_geom_data
+from data.data import get_agg_geom_data
 import numpy as np
 import pandas as pd
 
@@ -78,17 +78,23 @@ def create_total_trade_card(df, trade_flow):
     return card
 
 
-def create_historical_chart(filtered_df, title):
-    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({"VALUE": "sum"}) 
-    grouped_df["VALUE"] = grouped_df["VALUE"] / 1_000
+def create_historical_chart(filtered_df, title, trade_flow):
+
+    expected_filters = ["import", "export"]
+    if trade_flow not in expected_filters:
+        raise ValueError(f"Unexpected input for the trade flow. Expected {expected_filters}")
+
+    filter = trade_flow.upper()
+    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({filter: "sum"}) 
+    grouped_df[filter] = grouped_df[filter] / 1_000
     
     chart = (
         alt.Chart(grouped_df)
         .mark_bar()
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("VALUE:Q", title="Value: Million", axis=alt.Axis(format="~s")),
-            tooltip=["YEAR", "VALUE"]
+            y=alt.Y(f"{filter}:Q", title="Value: Million", axis=alt.Axis(format="~s")),
+            tooltip=["YEAR", filter]
         )
         .properties(title=title, width=320, height=100)
         .interactive()

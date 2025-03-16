@@ -4,8 +4,7 @@ import pandas as pd
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data.data import clean_data
-from data.map_data import (
+from data.data import (
     get_processed_data, 
     get_agg_geom_data)
 from components.inputs.inputs import (
@@ -26,8 +25,7 @@ from components.outputs.create_map import get_map_chart
 from cache import cache
 
 
-df = clean_data()
-processed_df = get_processed_data() 
+df = get_processed_data() 
 
 
 @callback(
@@ -38,12 +36,12 @@ processed_df = get_processed_data()
 )
 @cache.memoize()
 def update_total_trade_card(selected_provinces, selected_sectors):
-    filtered_df = processed_df.copy()
+    filtered_df = df
 
-    if "All" not in selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
-    if "All" not in selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+    if selected_provinces:
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
+    if selected_sectors:
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
     import_card_body = create_total_trade_card(filtered_df, "import").children  
     export_card_body = create_total_trade_card(filtered_df, "export").children  
@@ -58,12 +56,12 @@ def update_total_trade_card(selected_provinces, selected_sectors):
 
 @cache.memoize()
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
-    filtered_df = processed_df.copy()
+    filtered_df = df
 
-    if "All" not in selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
-    if "All" not in selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+    if selected_provinces:
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
+    if selected_sectors:
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
     net_trade_lineplot = create_net_trade_lineplot(filtered_df)
     return net_trade_lineplot
@@ -74,15 +72,17 @@ def update_net_trade_lineplot(selected_provinces, selected_sectors):
 )
 @cache.memoize()
 def create_chart(province):
-    if "All" in province:
+    filtered_df =  df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)] if province else df[(df['YEAR'] == 2024)] 
+
+    if province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Domestic export') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('sum(FULL_VALUE)', title='Value'),
+        alt.Chart(filtered_df).mark_bar().encode(
+        x=alt.X('sum(EXPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
-                alt.Tooltip('sum(FULL_VALUE)', title='Total export value:', format=',')  
+                alt.Tooltip('sum(EXPORT)', title='Total export value:', format=',')  
             ]
         ).properties(
             width=260,
@@ -97,15 +97,18 @@ def create_chart(province):
 )
 @cache.memoize()
 def create_chart(province):
-    if "All" in province:
+
+    filtered_df =  df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)] if province else df[(df['YEAR'] == 2024)] 
+
+    if province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Import') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('sum(FULL_VALUE)', title='Value'),
+        alt.Chart(filtered_df).mark_bar().encode(
+        x=alt.X('sum(IMPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
-                alt.Tooltip('sum(FULL_VALUE)', title='Total import value:', format=',') 
+                alt.Tooltip('sum(IMPORT)', title='Total import value:', format=',') 
             ]
         ).properties(
             width=260,
@@ -123,9 +126,9 @@ def create_chart(province):
 def update_map_chart(selected_province, selected_sector):
     """Updates the trade map based on user selections"""
     
-    filtered_df = processed_df
+    filtered_df = df
 
-    if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
+    if selected_sector and (isinstance(selected_sector, list)):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]
 
     updated_chart = get_map_chart(filtered_df, selected_province)
@@ -142,15 +145,15 @@ def update_map_chart(selected_province, selected_sector):
 def update_historical_charts(selected_provinces, selected_sectors):
     """Update the historical import and export charts based on dropdown selections."""
 
-    filtered_df = df.copy()
+    filtered_df = df
 
-    if "All" not in selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
+    if selected_provinces:
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
 
-    if "All" not in selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+    if selected_sectors:
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
-    import_chart = create_historical_chart(filtered_df[filtered_df["TRADE_FLOW"] == "Import"], "Annual Import")
-    export_chart = create_historical_chart(filtered_df[filtered_df["TRADE_FLOW"] == "Domestic export"], "Annual Export")
+    import_chart = create_historical_chart(filtered_df, "Annual Import", "import")
+    export_chart = create_historical_chart(filtered_df, "Annual Export", "export")
 
     return import_chart, export_chart

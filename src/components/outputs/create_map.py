@@ -1,5 +1,5 @@
 import altair as alt
-from data.map_data import get_agg_geom_data
+from data.data import get_agg_geom_data
 
 def get_map_chart(df, selected_province):
     

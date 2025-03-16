@@ -25,9 +25,6 @@ def load_canadian_provinces(
     """
     
     provinces = gpd.read_file(url).query("iso_a2 == 'CA'")[['name', 'geometry']]
-    provinces['name'] = provinces['name'].astype('category')
-    provinces.columns = [col.upper() for col in provinces.columns]
-    provinces = gpd.GeoDataFrame(provinces, geometry='GEOMETRY')
 
     try:
         if save_to.endswith('.csv'):

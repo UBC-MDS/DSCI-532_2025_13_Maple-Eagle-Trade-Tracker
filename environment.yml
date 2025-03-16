@@ -26,6 +26,8 @@ dependencies:
   - geopandas=1.0.1
   - pip
   - pyarrow=19.0.1
+  - flask=3.1.0  
+  - flask-caching=2.3.1
   - pip:
       - dash-vega-components
       - vl-convert-python>=0.14.0
