@@ -4,26 +4,28 @@ import pandas as pd
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data import clean_data
-from components.inputs import (
+from data.data import clean_data
+from data.map_data import (
+    get_processed_data, 
+    get_agg_geom_data)
+from components.inputs.inputs import (
     province_options,
     sector_options,
     province_checklist,
     sector_options,
     sector_checklist)
-from components.outputs import(
+from components.outputs.outputs import(
     create_net_trade_lineplot,
     create_total_trade_card,
     create_historical_chart,
-    get_agg_geom_data,
-    get_map_chart,
     create_chart_card,
     create_chart_card_trend_line,
     create_control_card
 )
+from components.outputs.create_map import get_map_chart
 
 df = clean_data()
-processed_df = pd.read_csv('../data/clean/processed_data.csv') 
+processed_df = get_processed_data() 
 
 @callback(
     [Output("import_card", "children"),
@@ -112,7 +114,7 @@ def create_chart(province):
 def update_map_chart(selected_province, selected_sector):
     """Updates the trade map based on user selections"""
     
-    filtered_df = processed_df.copy()
+    filtered_df = processed_df
 
     if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]

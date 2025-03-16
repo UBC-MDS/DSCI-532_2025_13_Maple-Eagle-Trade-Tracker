@@ -1,23 +1,10 @@
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html
 import dash_bootstrap_components as dbc
-import pandas as pd
-import altair as alt
-import dash_vega_components as dvc
-import geopandas as gpd
-import callbacks
-from data import df
-from components.inputs import (
-    province_options,
-    sector_options,
+import callbacks # callback module do not delete
+from components.inputs.inputs import (
     province_checklist,
-    sector_options,
     sector_checklist)
-from components.outputs import(
-    create_net_trade_lineplot,
-    create_total_trade_card,
-    create_historical_chart,
-    get_agg_geom_data,
-    get_map_chart,
+from components.outputs.outputs import(
     create_chart_card,
     create_chart_card_trend_line,
     create_control_card
