@@ -41,26 +41,48 @@ def create_total_trade_card(df, trade_flow):
 
     sum_by_trade_df = df[df['YEAR'] == max_year]
 
-    if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
+    if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999_999_999:
         if trade_flow.lower() == 'import':
             total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
-            title = "Total Import Value in CAD by Millions"
+            total_trade_value = f"${round(total_trade_value / 1000_000_000_000, 2)}T"
+            title = "Total Import Value in CAD by Trillions"
             text_color = 'red'
         else: 
             total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
-            title = "Total Export Value in CAD by Millions"
+            total_trade_value = f"${round(total_trade_value / 1000_000_000_000, 2)}T"
+            title = "Total Export Value in CAD by Trillions"
+            text_color = 'green'
+    elif np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999_999:
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000_000_000, 2)}B"
+            title = "Total Import Value in CAD in  Billions"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000_000_000, 2)}B"
+            title = "Total Export Value in CAD in Billions"
+            text_color = 'green'
+    elif np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000_000, 2)}M"
+            title = "Total Import Value in CAD in Millions"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000_000, 2)}M"
+            title = "Total Export Value in CAD in Millions"
             text_color = 'green'
     else:
         if trade_flow.lower() == 'import':
             total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}K"
             title = "Total Import Value in CAD in Thousands"
             text_color = 'red'
         else: 
             total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}K"
             title = "Total Export Value in CAD in Thousands"
             text_color = 'green'
 
