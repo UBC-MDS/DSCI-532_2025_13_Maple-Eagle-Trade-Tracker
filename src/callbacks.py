@@ -16,8 +16,7 @@ from components.inputs.inputs import (
 from components.outputs.outputs import(
     create_net_trade_lineplot,
     create_total_trade_card,
-    create_historical_import_chart,
-    create_historical_export_chart,
+    create_historical_chart,
     create_chart_card,
     create_chart_card_trend_line,
     create_control_card
@@ -39,9 +38,9 @@ df = get_processed_data()
 def update_total_trade_card(selected_provinces, selected_sectors):
     filtered_df = df.copy()
 
-    if "All" not in selected_provinces:
+    if selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
-    if "All" not in selected_sectors:
+    if selected_sectors:
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
 
     import_card_body = create_total_trade_card(filtered_df, "import").children  
@@ -59,9 +58,9 @@ def update_total_trade_card(selected_provinces, selected_sectors):
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
     filtered_df = df.copy()
 
-    if "All" not in selected_provinces:
+    if selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
-    if "All" not in selected_sectors:
+    if selected_sectors:
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
 
     net_trade_lineplot = create_net_trade_lineplot(filtered_df)
@@ -73,10 +72,12 @@ def update_net_trade_lineplot(selected_provinces, selected_sectors):
 )
 @cache.memoize()
 def create_chart(province):
-    if "All" in province:
+    filtered_df =  df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)] if province else df[(df['YEAR'] == 2024)] 
+
+    if province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)]).mark_bar().encode(
+        alt.Chart(filtered_df).mark_bar().encode(
         x=alt.X('sum(EXPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
@@ -96,10 +97,13 @@ def create_chart(province):
 )
 @cache.memoize()
 def create_chart(province):
-    if "All" in province:
+
+    filtered_df =  df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)] if province else df[(df['YEAR'] == 2024)] 
+
+    if province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)]).mark_bar().encode(
+        alt.Chart(filtered_df).mark_bar().encode(
         x=alt.X('sum(IMPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
@@ -124,7 +128,7 @@ def update_map_chart(selected_province, selected_sector):
     
     filtered_df = df
 
-    if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
+    if selected_sector and (isinstance(selected_sector, list)):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]
 
     updated_chart = get_map_chart(filtered_df, selected_province)
@@ -143,13 +147,13 @@ def update_historical_charts(selected_provinces, selected_sectors):
 
     filtered_df = df.copy()
 
-    if "All" not in selected_provinces:
+    if selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
 
-    if "All" not in selected_sectors:
+    if selected_sectors:
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
 
-    import_chart = create_historical_import_chart(filtered_df, "Annual Import")
-    export_chart = create_historical_export_chart(filtered_df, "Annual Export")
+    import_chart = create_historical_chart(filtered_df, "Annual Import", "import")
+    export_chart = create_historical_chart(filtered_df, "Annual Export", "export")
 
     return import_chart, export_chart

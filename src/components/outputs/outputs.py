@@ -78,34 +78,23 @@ def create_total_trade_card(df, trade_flow):
     return card
 
 
-def create_historical_import_chart(filtered_df, title):
-    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({"IMPORT": "sum"}) 
-    grouped_df["IMPORT"] = grouped_df["IMPORT"] / 1_000
-    
-    chart = (
-        alt.Chart(grouped_df)
-        .mark_bar()
-        .encode(
-            x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("IMPORT:Q", title="Value: Million", axis=alt.Axis(format="~s")),
-            tooltip=["YEAR", "IMPORT"]
-        )
-        .properties(title=title, width=320, height=100)
-        .interactive()
-    )
-    return chart.to_dict()
+def create_historical_chart(filtered_df, title, trade_flow):
 
-def create_historical_export_chart(filtered_df, title):
-    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({"EXPORT": "sum"}) 
-    grouped_df["EXPORT"] = grouped_df["EXPORT"] / 1_000
+    expected_filters = ["import", "export"]
+    if trade_flow not in expected_filters:
+        raise ValueError(f"Unexpected input for the trade flow. Expected {expected_filters}")
+
+    filter = trade_flow.upper()
+    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({filter: "sum"}) 
+    grouped_df[filter] = grouped_df[filter] / 1_000
     
     chart = (
         alt.Chart(grouped_df)
         .mark_bar()
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("EXPORT:Q", title="Value: Million", axis=alt.Axis(format="~s")),
-            tooltip=["YEAR", "EXPORT"]
+            y=alt.Y(f"{filter}:Q", title="Value: Million", axis=alt.Axis(format="~s")),
+            tooltip=["YEAR", filter]
         )
         .properties(title=title, width=320, height=100)
         .interactive()
