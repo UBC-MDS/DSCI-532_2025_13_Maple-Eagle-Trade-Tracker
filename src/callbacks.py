@@ -43,6 +43,7 @@ def update_total_trade_card(selected_provinces, selected_sectors):
         filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
     if selected_sectors:
         filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
+    
 
     import_card_body = create_total_trade_card(filtered_df, "import").children  
     export_card_body = create_total_trade_card(filtered_df, "export").children  
@@ -72,16 +73,17 @@ def update_net_trade_lineplot(selected_provinces, selected_sectors):
     Input('province-dropdown', 'value')
 )
 @cache.memoize()
-def create_chart(province):
-    filtered_df =  df_sector[(df_sector['YEAR'] == 2024) & df_sector['PROVINCE'].isin(province)] if province else df_sector[(df_sector['YEAR'] == 2024)] 
+def create_export_chart(province):
+    province = [province] if isinstance(province, str) else province 
+    filtered_df = df_sector[(df_sector['YEAR'] == 2024) & df_sector['PROVINCE'].isin(province)] if province else df_sector[(df_sector['YEAR'] == 2024)]
 
-    if province:
-        province = df_sector['PROVINCE'].unique()
-    return(
+    filtered_df = filtered_df[filtered_df["EXPORT"] > 0]  
+
+    return (
         alt.Chart(filtered_df).mark_bar().encode(
-        x=alt.X('sum(EXPORT)', title='Value (log scale)', scale=alt.Scale(type='log')),
-        y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
-        tooltip=[
+            x=alt.X('sum(EXPORT)', title='Value (symlog scale)', scale=alt.Scale(type='log')),
+            y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
+            tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
                 alt.Tooltip('sum(EXPORT)', title='Total export value:', format=',')  
             ]
@@ -92,22 +94,23 @@ def create_chart(province):
         ).to_dict()
     )
 
+
 @callback(
     Output('bar2', 'spec'),
     Input('province-dropdown', 'value')
 )
 @cache.memoize()
-def create_chart(province):
+def create_import_chart(province):
+    province = [province] if isinstance(province, str) else province  
+    filtered_df = df_sector[(df_sector['YEAR'] == 2024) & df_sector['PROVINCE'].isin(province)] if province else df_sector[(df_sector['YEAR'] == 2024)]
 
-    filtered_df =  df_sector[(df_sector['YEAR'] == 2024) & df_sector['PROVINCE'].isin(province)] if province else df_sector[(df_sector['YEAR'] == 2024)] 
+    filtered_df = filtered_df[filtered_df["IMPORT"] > 0]  
 
-    if province:
-        province = df_sector['PROVINCE'].unique()
-    return(
+    return (
         alt.Chart(filtered_df).mark_bar().encode(
-        x=alt.X('sum(IMPORT)', title='Value (log scale)', scale=alt.Scale(type='log')),
-        y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
-        tooltip=[
+            x=alt.X('sum(IMPORT)', title='Value (symlog scale)', scale=alt.Scale(type='log')),
+            y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
+            tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
                 alt.Tooltip('sum(IMPORT)', title='Total import value:', format=',') 
             ]
@@ -117,6 +120,7 @@ def create_chart(province):
             title='Imports from the US in 2024 by sector'
         ).to_dict()
     )
+
 
 @callback(
     Output("trade_geographical_map", "spec"),
