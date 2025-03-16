@@ -36,12 +36,12 @@ df = get_processed_data()
 )
 @cache.memoize()
 def update_total_trade_card(selected_provinces, selected_sectors):
-    filtered_df = df.copy()
+    filtered_df = df
 
     if selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
     if selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
     import_card_body = create_total_trade_card(filtered_df, "import").children  
     export_card_body = create_total_trade_card(filtered_df, "export").children  
@@ -56,12 +56,12 @@ def update_total_trade_card(selected_provinces, selected_sectors):
 
 @cache.memoize()
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
-    filtered_df = df.copy()
+    filtered_df = df
 
     if selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
     if selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
     net_trade_lineplot = create_net_trade_lineplot(filtered_df)
     return net_trade_lineplot
@@ -145,13 +145,13 @@ def update_map_chart(selected_province, selected_sector):
 def update_historical_charts(selected_provinces, selected_sectors):
     """Update the historical import and export charts based on dropdown selections."""
 
-    filtered_df = df.copy()
+    filtered_df = df
 
     if selected_provinces:
-        filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
+        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
 
     if selected_sectors:
-        filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
+        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
 
     import_chart = create_historical_chart(filtered_df, "Annual Import", "import")
     export_chart = create_historical_chart(filtered_df, "Annual Export", "export")
