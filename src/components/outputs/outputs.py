@@ -32,7 +32,7 @@ def create_net_trade_lineplot(df):
         alt.Chart(df_annual)
         .mark_line(color="gray") 
         .encode(
-            x=alt.X("YEAR:O", title="Year"),
+            x=alt.X("YEAR:O", title="Year", axis=alt.Axis(labelAngle=-45)),
             y=alt.Y("NET_TRADE:Q", title=f"Net Trade ({unit})", axis=alt.Axis(format="~s"))
         )
     )
@@ -165,7 +165,7 @@ def create_historical_chart(filtered_df, title, trade_flow):
         alt.Chart(grouped_df)
         .mark_bar()
         .encode(
-            x=alt.X("YEAR:O", title="Year"),
+            x=alt.X("YEAR:O", title="Year", axis=alt.Axis(labelAngle=-45)),
             y=alt.Y(
                 f"{trade_col}:Q",
                 title=f"Value ({unit})",
