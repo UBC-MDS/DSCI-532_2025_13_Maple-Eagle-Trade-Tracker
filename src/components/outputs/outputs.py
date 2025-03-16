@@ -67,68 +67,48 @@ def create_net_trade_lineplot(df):
 
 
 def create_total_trade_card(df, trade_flow):
-    df['YEAR'] = pd.to_numeric(df['YEAR'], errors='coerce')
-    max_year = max(df['YEAR'])
+    df = df.copy()  
+    
+    df["YEAR"] = pd.to_numeric(df["YEAR"], errors="coerce")
+    max_year = df["YEAR"].max()
 
-    sum_by_trade_df = df[df['YEAR'] == max_year]
+    sum_by_trade_df = df[df["YEAR"] == max_year]
 
-    if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999_999_999:
-        if trade_flow.lower() == 'import':
-            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000_000_000, 2)}T"
-            title = "Total Import Value in CAD by Trillions"
-            text_color = 'red'
-        else: 
-            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000_000_000, 2)}T"
-            title = "Total Export Value in CAD by Trillions"
-            text_color = 'green'
-    elif np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999_999:
-        if trade_flow.lower() == 'import':
-            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000_000, 2)}B"
-            title = "Total Import Value in CAD in  Billions"
-            text_color = 'red'
-        else: 
-            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000_000, 2)}B"
-            title = "Total Export Value in CAD in Billions"
-            text_color = 'green'
-    elif np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
-        if trade_flow.lower() == 'import':
-            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000, 2)}M"
-            title = "Total Import Value in CAD in Millions"
-            text_color = 'red'
-        else: 
-            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000_000, 2)}M"
-            title = "Total Export Value in CAD in Millions"
-            text_color = 'green'
+    import_sum = sum_by_trade_df["IMPORT"].sum() if "IMPORT" in sum_by_trade_df else 0
+    export_sum = sum_by_trade_df["EXPORT"].sum() if "EXPORT" in sum_by_trade_df else 0
+
+    max_trade = max(import_sum, export_sum)
+    
+    if max_trade >= 1_000_000_000_000:
+        scale_factor, unit = 1_000_000_000_000, "T"
+    elif max_trade >= 1_000_000_000:
+        scale_factor, unit = 1_000_000_000, "B"
+    elif max_trade >= 1_000_000:
+        scale_factor, unit = 1_000_000, "M"
+    elif max_trade >= 1_000:
+        scale_factor, unit = 1_000, "K"
     else:
-        if trade_flow.lower() == 'import':
-            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000, 2)}K"
-            title = "Total Import Value in CAD in Thousands"
-            text_color = 'red'
-        else: 
-            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
-            total_trade_value = f"${round(total_trade_value / 1000, 2)}K"
-            title = "Total Export Value in CAD in Thousands"
-            text_color = 'green'
+        scale_factor, unit = 1, ""
+
+    if trade_flow.lower() == "import":
+        total_trade_value = f"${round(import_sum / scale_factor, 2)}{unit}"
+        title = "Total Import Value in CAD"
+        text_color = "red"
+    else:
+        total_trade_value = f"${round(export_sum / scale_factor, 2)}{unit}"
+        title = "Total Export Value in CAD"
+        text_color = "green"
 
     card = dbc.Card(
         dbc.CardBody([
-            html.H6(title, className="card-title", 
-                    style={"font-size": "1.2rem", "margin-bottom": "0.2rem"}),  
-            html.P(total_trade_value,
-                   className="card-text",
-                   style={"color": text_color, "font-size": "1rem"}) 
+            html.H6(title, className="card-title", style={"font-size": "1.2rem", "margin-bottom": "0.2rem"}),  
+            html.P(total_trade_value, className="card-text", style={"color": text_color, "font-size": "1rem"}) 
         ]),
-        style={"width": "18rem", "height": "6rem"},  
+        style={"width": "18rem", "height": "6rem"},
     )
 
     return card
+
 
 
 

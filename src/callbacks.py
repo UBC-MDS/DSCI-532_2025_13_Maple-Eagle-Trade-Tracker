@@ -86,7 +86,7 @@ def create_chart(province):
                 alt.Tooltip('sum(EXPORT)', title='Total export value:', format=',')  
             ]
         ).properties(
-            width=260,
+            width=360,
             height=120,
             title='Exports to the US in 2024 by sector'
         ).to_dict()
@@ -112,7 +112,7 @@ def create_chart(province):
                 alt.Tooltip('sum(IMPORT)', title='Total import value:', format=',') 
             ]
         ).properties(
-            width=260,
+            width=360,
             height=120,
             title='Imports from the US in 2024 by sector'
         ).to_dict()
