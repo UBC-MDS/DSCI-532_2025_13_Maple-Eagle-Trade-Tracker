@@ -145,13 +145,12 @@ def update_map_chart(selected_province, selected_sector):
 def update_historical_charts(selected_provinces, selected_sectors):
     """Update the historical import and export charts based on dropdown selections."""
 
-    filtered_df = df
+    if not selected_provinces:  
+        selected_provinces = df["PROVINCE"].dropna().unique()
+    if not selected_sectors:
+        selected_sectors = df["SECTOR"].dropna().unique()
 
-    if selected_provinces:
-        filtered_df = filtered_df.loc[filtered_df["PROVINCE"].isin(selected_provinces)]
-
-    if selected_sectors:
-        filtered_df = filtered_df.loc[filtered_df["SECTOR"].isin(selected_sectors)]
+    filtered_df = df[df["PROVINCE"].isin(selected_provinces) & df["SECTOR"].isin(selected_sectors)]
 
     import_chart = create_historical_chart(filtered_df, "Annual Import", "import")
     export_chart = create_historical_chart(filtered_df, "Annual Export", "export")

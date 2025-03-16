@@ -7,32 +7,63 @@ from data.data import get_agg_geom_data
 import numpy as np
 import pandas as pd
 
-def create_net_trade_lineplot(df):
-    
-    df_annual = df.groupby('YEAR').agg({'NET_TRADE': 'sum'}).reset_index()
-    df_annual["NET_TRADE"] = df_annual["NET_TRADE"] / 1_000_000  
+import altair as alt
+import pandas as pd
 
-    chart = (
+def create_net_trade_lineplot(df):
+    df_annual = df.groupby('YEAR').agg({'NET_TRADE': 'sum'}).reset_index()
+    
+    max_trade = abs(df_annual["NET_TRADE"]).max()
+
+    if max_trade >= 1_000_000_000_000:
+        scale_factor, unit, format_unit = 1_000_000_000_000, "Trillion", "T"
+    elif max_trade >= 1_000_000_000:
+        scale_factor, unit, format_unit = 1_000_000_000, "Billion", "B"
+    elif max_trade >= 1_000_000:
+        scale_factor, unit, format_unit = 1_000_000, "Million", "M"
+    elif max_trade >= 1_000:
+        scale_factor, unit, format_unit = 1_000, "Thousand", "K"
+    else:
+        scale_factor, unit, format_unit = 1, "", ""
+
+    df_annual["NET_TRADE"] = df_annual["NET_TRADE"] / scale_factor
+
+    line = (
         alt.Chart(df_annual)
-        .mark_line(point=True)
+        .mark_line(color="gray") 
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("NET_TRADE:Q", title="Net Trade (Million)", axis=alt.Axis(format="~s")),  
+            y=alt.Y("NET_TRADE:Q", title=f"Net Trade ({unit})", axis=alt.Axis(format="~s"))
+        )
+    )
+
+    points = (
+        alt.Chart(df_annual)
+        .mark_point(size=20)  
+        .encode(
+            x="YEAR:O",
+            y="NET_TRADE:Q",
+            color=alt.condition(
+                alt.datum.NET_TRADE > 0,
+                alt.value("green"),  
+                alt.value("red")  
+            ),
             tooltip=[
                 alt.Tooltip("YEAR", title="Year"),
-                alt.Tooltip("NET_TRADE", title="Net Trade (M)", format=".2f")  
+                alt.Tooltip("NET_TRADE", title=f"Net Trade ({format_unit})", format=".2f")
             ]
         )
-        .properties(
-            title="Aggregate Net Trade by Year",
-            width=320,
-            height=80
-        )
+    )
+
+    chart = (
+        (line + points) 
+        .properties(title="Aggregate Net Trade by Year", width=320, height=80)
         .configure_axis(grid=True)
         .interactive()
     )
 
     return chart.to_dict()
+
 
 
 def create_total_trade_card(df, trade_flow):
@@ -100,28 +131,67 @@ def create_total_trade_card(df, trade_flow):
     return card
 
 
-def create_historical_chart(filtered_df, title, trade_flow):
 
+
+def create_historical_chart(filtered_df, title, trade_flow):
     expected_filters = ["import", "export"]
-    if trade_flow not in expected_filters:
+    if trade_flow.lower() not in expected_filters:
         raise ValueError(f"Unexpected input for the trade flow. Expected {expected_filters}")
 
-    filter = trade_flow.upper()
-    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({filter: "sum"}) 
-    grouped_df[filter] = grouped_df[filter] / 1_000
-    
+    trade_col = trade_flow.upper() 
+    grouped_df = filtered_df.groupby("YEAR", as_index=False).agg({trade_col: "sum"})
+    max_value = grouped_df[trade_col].max()
+    min_value = grouped_df[trade_col].min()
+
+    if max_value >= 1_000_000_000_000:
+        scale_factor, unit, format_unit = 1_000_000_000_000, "Trillion", "T"
+    elif max_value >= 1_000_000_000:
+        scale_factor, unit, format_unit = 1_000_000_000, "Billion", "B"
+    elif max_value >= 1_000_000:
+        scale_factor, unit, format_unit = 1_000_000, "Million", "M"
+    elif max_value >= 1_000:
+        scale_factor, unit, format_unit = 1_000, "Thousand", "K"
+    else:
+        scale_factor, unit, format_unit = 1, "", ""
+
+    grouped_df[trade_col] = grouped_df[trade_col] / scale_factor
+
+    color_scale = alt.Scale(
+        domain=[min_value / scale_factor, max_value / scale_factor],  
+        range=["yellow", "red"] if trade_flow.lower() == "import" else ["yellow", "green"]
+    )
+
     chart = (
         alt.Chart(grouped_df)
         .mark_bar()
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y(f"{filter}:Q", title="Value: Million", axis=alt.Axis(format="~s")),
-            tooltip=["YEAR", filter]
+            y=alt.Y(
+                f"{trade_col}:Q",
+                title=f"Value ({unit})",
+                axis=alt.Axis(format="~s")
+            ),
+            color=alt.Color(
+                f"{trade_col}:Q",
+                scale=color_scale,
+                legend=None  
+            ),
+            tooltip=[
+                alt.Tooltip("YEAR", title="Year"),
+                alt.Tooltip(trade_col, title=f"Value ({format_unit})", format=".2f")
+            ]
         )
-        .properties(title=title, width=320, height=100)
+        .properties(
+            title=title,
+            width=320,
+            height=100
+        )
         .interactive()
     )
+
     return chart.to_dict()
+
+
 
 
 def create_chart_card(title, chart_id, height="18rem"):
