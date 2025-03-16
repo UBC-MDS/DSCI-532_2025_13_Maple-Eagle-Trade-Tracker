@@ -4,7 +4,6 @@ import pandas as pd
 import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
-from data.data import clean_data
 from data.map_data import (
     get_processed_data, 
     get_agg_geom_data)
@@ -17,7 +16,8 @@ from components.inputs.inputs import (
 from components.outputs.outputs import(
     create_net_trade_lineplot,
     create_total_trade_card,
-    create_historical_chart,
+    create_historical_import_chart,
+    create_historical_export_chart,
     create_chart_card,
     create_chart_card_trend_line,
     create_control_card
@@ -26,8 +26,7 @@ from components.outputs.create_map import get_map_chart
 from cache import cache
 
 
-df = clean_data()
-processed_df = get_processed_data() 
+df = get_processed_data() 
 
 
 @callback(
@@ -38,7 +37,7 @@ processed_df = get_processed_data()
 )
 @cache.memoize()
 def update_total_trade_card(selected_provinces, selected_sectors):
-    filtered_df = processed_df.copy()
+    filtered_df = df.copy()
 
     if "All" not in selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
@@ -58,7 +57,7 @@ def update_total_trade_card(selected_provinces, selected_sectors):
 
 @cache.memoize()
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
-    filtered_df = processed_df.copy()
+    filtered_df = df.copy()
 
     if "All" not in selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
@@ -77,12 +76,12 @@ def create_chart(province):
     if "All" in province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Domestic export') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('sum(FULL_VALUE)', title='Value'),
+        alt.Chart(df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)]).mark_bar().encode(
+        x=alt.X('sum(EXPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
-                alt.Tooltip('sum(FULL_VALUE)', title='Total export value:', format=',')  
+                alt.Tooltip('sum(EXPORT)', title='Total export value:', format=',')  
             ]
         ).properties(
             width=260,
@@ -100,12 +99,12 @@ def create_chart(province):
     if "All" in province:
         province = df['PROVINCE'].unique()
     return(
-        alt.Chart(df[(df['YEAR'] == 2024) & (df['TRADE_FLOW'] == 'Import') & df['PROVINCE'].isin(province)]).mark_bar().encode(
-        x=alt.X('sum(FULL_VALUE)', title='Value'),
+        alt.Chart(df[(df['YEAR'] == 2024) & df['PROVINCE'].isin(province)]).mark_bar().encode(
+        x=alt.X('sum(IMPORT)', title='Value'),
         y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
         tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
-                alt.Tooltip('sum(FULL_VALUE)', title='Total import value:', format=',') 
+                alt.Tooltip('sum(IMPORT)', title='Total import value:', format=',') 
             ]
         ).properties(
             width=260,
@@ -123,7 +122,7 @@ def create_chart(province):
 def update_map_chart(selected_province, selected_sector):
     """Updates the trade map based on user selections"""
     
-    filtered_df = processed_df
+    filtered_df = df
 
     if selected_sector and (isinstance(selected_sector, list) and selected_sector != ['All']):
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sector)]
@@ -150,7 +149,7 @@ def update_historical_charts(selected_provinces, selected_sectors):
     if "All" not in selected_sectors:
         filtered_df = filtered_df[filtered_df["SECTOR"].isin(selected_sectors)]
 
-    import_chart = create_historical_chart(filtered_df[filtered_df["TRADE_FLOW"] == "Import"], "Annual Import")
-    export_chart = create_historical_chart(filtered_df[filtered_df["TRADE_FLOW"] == "Domestic export"], "Annual Export")
+    import_chart = create_historical_import_chart(filtered_df, "Annual Import")
+    export_chart = create_historical_export_chart(filtered_df, "Annual Export")
 
     return import_chart, export_chart
