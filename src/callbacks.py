@@ -81,7 +81,7 @@ def create_export_chart(province):
 
     return (
         alt.Chart(filtered_df).mark_bar().encode(
-            x=alt.X('sum(EXPORT)', title='Value (symlog scale)', scale=alt.Scale(type='log')),
+            x=alt.X('sum(EXPORT)', title='Value in CAD (symlog scale)', scale=alt.Scale(type='log')),
             y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
             tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  
@@ -108,7 +108,7 @@ def create_import_chart(province):
 
     return (
         alt.Chart(filtered_df).mark_bar().encode(
-            x=alt.X('sum(IMPORT)', title='Value (symlog scale)', scale=alt.Scale(type='log')),
+            x=alt.X('sum(IMPORT)', title='Value in CAD (symlog scale)', scale=alt.Scale(type='log')),
             y=alt.Y('SECTOR', title='Sector', axis=alt.Axis(labelLimit=400, titlePadding=80)).sort('-x'),
             tooltip=[
                 alt.Tooltip('SECTOR', title='Sector:'),  

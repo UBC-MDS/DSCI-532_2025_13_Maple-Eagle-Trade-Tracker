@@ -46,8 +46,8 @@ app.layout = dbc.Container([
                         "backgroundBlendMode": "overlay"  
                     }   
                 ),
-                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "0rem", "margin-top": "1rem"}), 
-                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "padding": "0.2rem"}), width=3, style={"margin-left": "-2.5rem", "margin-top": "1rem"}),
+                dbc.Col(dbc.Card(id="import_card", style={"width": "18rem", "height": "7.1rem", "padding": "0.2rem"}), width=3, style={"margin-left": "0rem", "margin-top": "1rem"}), 
+                dbc.Col(dbc.Card(id="export_card", style={"width": "18rem", "height": "7.1rem", "padding": "0.2rem"}), width=3, style={"margin-left": "-2.5rem", "margin-top": "1rem"}),
                 dbc.Col(create_chart_card_trend_line("Trade Balance Over Time", "trade_balance_chart"), width=4, style={"margin-left": "-2.7rem", "margin-top": "1rem"})  
             ], className="mb-1"),
 
@@ -65,7 +65,7 @@ app.layout = dbc.Container([
                 ], width=7),  # Set the width of the column to match the map width
 
                 dbc.Col(create_chart_card("Trade Geographical Distribution", "trade_geographical_map", height="32rem"), 
-                        width=7, style={"width": "56.5rem", "margin-right": "-0.5rem", "margin-top": "-4rem"}),  
+                        width=7, style={"width": "56.5rem", "margin-right": "-0.5rem", "margin-top": "-6rem"}),  
                 dbc.Col([
                     dbc.Row([
                         create_chart_card("Annual Import", "historical_import_chart", height="13rem")
@@ -73,7 +73,7 @@ app.layout = dbc.Container([
                     dbc.Row([
                         create_chart_card("Annual Export", "historical_export_chart", height="13rem")
                     ], className="mb-1")
-                ], width=3, style={'flex': '0 0 32%', "margin-left": "1rem", "margin-top": "1rem"})
+                ], width=3, style={'flex': '0 0 32%', "margin-left": "1rem", "margin-top": "-0.9rem"})
             ], className="mb-1"),
 
             dbc.Row([
