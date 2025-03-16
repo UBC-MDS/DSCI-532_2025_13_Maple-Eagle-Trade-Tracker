@@ -34,7 +34,7 @@ processed_df = get_processed_data()
      Input("sector-dropdown", "value")]
 )
 def update_total_trade_card(selected_provinces, selected_sectors):
-    filtered_df = df.copy()
+    filtered_df = processed_df.copy()
 
     if "All" not in selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]
@@ -52,7 +52,7 @@ def update_total_trade_card(selected_provinces, selected_sectors):
      Input("sector-dropdown", "value")]
 )
 def update_net_trade_lineplot(selected_provinces, selected_sectors):
-    filtered_df = df.copy()
+    filtered_df = processed_df.copy()
 
     if "All" not in selected_provinces:
         filtered_df = filtered_df[filtered_df["PROVINCE"].isin(selected_provinces)]

@@ -4,27 +4,23 @@ import altair as alt
 import dash_vega_components as dvc
 import geopandas as gpd
 from data.map_data import get_agg_geom_data
+import numpy as np
+import pandas as pd
 
 def create_net_trade_lineplot(df):
-    reshaped_df = df.pivot(index=['YEAR_MONTH', 'YEAR', 'PROVINCE', 'SECTOR'],
-                           columns='TRADE_FLOW', 
-                           values='FULL_VALUE').reset_index()
-
-    reshaped_df['NET'] = reshaped_df['Domestic export'] - reshaped_df['Import']
-    df_annual = reshaped_df.groupby(['YEAR', 'PROVINCE', 'SECTOR']).agg({'NET': 'sum'}).reset_index()
-    df_annual = df_annual.groupby('YEAR').agg({'NET': 'sum'}).reset_index()
-
-    df_annual["NET"] = df_annual["NET"] / 1_000_000  
+    
+    df_annual = df.groupby('YEAR').agg({'NET_TRADE': 'sum'}).reset_index()
+    df_annual["NET_TRADE"] = df_annual["NET_TRADE"] / 1_000_000  
 
     chart = (
         alt.Chart(df_annual)
         .mark_line(point=True)
         .encode(
             x=alt.X("YEAR:O", title="Year"),
-            y=alt.Y("NET:Q", title="Net Trade (Million)", axis=alt.Axis(format="~s")),  
+            y=alt.Y("NET_TRADE:Q", title="Net Trade (Million)", axis=alt.Axis(format="~s")),  
             tooltip=[
                 alt.Tooltip("YEAR", title="Year"),
-                alt.Tooltip("NET", title="Net Trade (M)", format=".2f")  
+                alt.Tooltip("NET_TRADE", title="Net Trade (M)", format=".2f")  
             ]
         )
         .properties(
@@ -40,24 +36,39 @@ def create_net_trade_lineplot(df):
 
 
 def create_total_trade_card(df, trade_flow):
+    df['YEAR'] = pd.to_numeric(df['YEAR'], errors='coerce')
     max_year = max(df['YEAR'])
 
-    sum_by_trade_df = df[df['YEAR'] == max_year].groupby('TRADE_FLOW')['VALUE'].sum()
+    sum_by_trade_df = df[df['YEAR'] == max_year]
 
-    if trade_flow.lower() == 'import':
-        total_trade_value = sum_by_trade_df.get("Import", 0) / 1_000_000 
-        title = "Total Import Value in CAD (Million)"
-        text_color = 'red'
+    if np.maximum(np.sum(sum_by_trade_df.get("IMPORT", 0)),np.sum(sum_by_trade_df.get("EXPORT", 0))) > 999_999:
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
+            title = "Total Import Value in CAD by Millions"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000000, 2)}M"
+            title = "Total Export Value in CAD by Millions"
+            text_color = 'green'
     else:
-        total_trade_value = sum_by_trade_df.get("Domestic export", 0) / 1_000_000
-        title = "Total Export Value in CAD (Million)"
-        text_color = 'green'
+        if trade_flow.lower() == 'import':
+            total_trade_value = np.sum(sum_by_trade_df.get("IMPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            title = "Total Import Value in CAD in Thousands"
+            text_color = 'red'
+        else: 
+            total_trade_value = np.sum(sum_by_trade_df.get("EXPORT", 0))
+            total_trade_value = f"${round(total_trade_value / 1000, 2)}k"
+            title = "Total Export Value in CAD in Thousands"
+            text_color = 'green'
 
     card = dbc.Card(
         dbc.CardBody([
             html.H6(title, className="card-title", 
                     style={"font-size": "1.2rem", "margin-bottom": "0.2rem"}),  
-            html.P(f"${total_trade_value:,.2f}",
+            html.P(total_trade_value,
                    className="card-text",
                    style={"color": text_color, "font-size": "1rem"}) 
         ]),
