@@ -1,5 +1,6 @@
 from dash import Dash, html
 import dash_bootstrap_components as dbc
+import dash_vega_components as dvc
 import callbacks # callback module do not delete
 from components.inputs.inputs import (
     province_checklist,
@@ -51,6 +52,18 @@ app.layout = dbc.Container([
             ], className="mb-1"),
 
             dbc.Row([
+                # Loading Spinner
+                dbc.Col([  # Ensure the spinner takes the same space as the map chart
+                    dbc.Spinner(
+                        id="loading-map",  # Unique ID for the loading spinner
+                        type="circle",
+                        children=[
+                            html.Div("Loading map... please wait", style={"textAlign": "center"}),
+                            dvc.Vega(id="trade_geographical_map_spinner")  # Unique ID for Vega map inside the spinner
+                        ],
+                    ),
+                ], width=7),  # Set the width of the column to match the map width
+
                 dbc.Col(create_chart_card("Trade Geographical Distribution", "trade_geographical_map", height="32rem"), 
                         width=7, style={"width": "56.5rem", "margin-right": "-0.5rem", "margin-top": "-4rem"}),  
                 dbc.Col([
