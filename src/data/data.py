@@ -64,3 +64,12 @@ def get_agg_geom_data(df):
     geo_data = gpd.GeoDataFrame(geo_data, geometry="geometry")
     
     return geo_data
+
+
+def get_processed_data_abb(
+    data_path = '../data/processed/processed_data_abb.csv'
+):
+    """Returns the processed data with abbreviated sector names"""
+    processed_df = pd.read_csv(data_path)
+    
+    return processed_df
