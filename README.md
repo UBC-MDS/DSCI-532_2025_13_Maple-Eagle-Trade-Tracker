@@ -26,7 +26,7 @@ If you're interested in running the app locally or contributing to its developme
 2.  **Install dependencies** We have provided a environment.yaml file to help you get started. You can install the dependencies by running:
 
     ``` bash
-    conda env create --file environment.yaml
+    conda env create --file environment.yml
     conda activate maple_eagle
     ```
 
